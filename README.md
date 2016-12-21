@@ -1,3 +1,4 @@
 - Pour selection de l'espèce : autocomplétion avec liste pré-chargé en JS (pas d'appel WS au serveur à chaque fois)
 - Faire architecture 3 tiers complète : le client JS ne fait que consommer les WS du back pour récupérer les infos et les envoyer
 - Quid de la vérification des données ? => stocker l'adresse MAC et IP
+- Permettre d'afficher la carte IGN ou Google Maps (ou les deux ?)

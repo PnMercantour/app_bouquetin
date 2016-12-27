@@ -2,8 +2,6 @@ from pathlib import Path
 from flask import Flask, render_template, request, redirect
 # from flask_sqlalchemy import SQLAlchemy
 
-import config
-
 
 app = Flask(__name__)  # Convention Flask
 
@@ -29,7 +27,7 @@ DB_PATH = VAR_DIR / 'db.sqlite'
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html', ign_api_key=config.ign_api_key)
+    return render_template('index.html')
 
 
 

@@ -1,6 +1,48 @@
 {
 	"ign_api_key": "0ldfl0m1mud840h6oggz9y95", 
 	"animal_max_number" : 25, 
-	"left-ear-colors" : ["rouge", "jaune"], 
-	"right-ear-colors" : ["bleu", "jaune"]
+	"animals" : [ 
+		{
+			"name" : "Machin", 
+			"gender" : "male",
+			"left_ear" : "bleu", 
+			"right_ear" : "jaune", 
+			"picture" : "/static/pictures/machin.jpg"
+		},
+		{
+			"name" : "Truc", 
+			"gender" : "male",
+			"left_ear" : "bleu", 
+			"right_ear" : "rouge", 
+			"picture" : "/static/pictures/truc.jpg"
+		},
+		{
+			"name" : "Bidul", 
+			"gender" : "male",
+			"left_ear" : "rouge", 
+			"right_ear" : "jaune", 
+			"picture" : "/static/pictures/bidul.jpg"
+		}, 
+		{
+			"name" : "Machine", 
+			"gender" : "female",
+			"left_ear" : "violet", 
+			"right_ear" : "bleu", 
+			"picture" : "/static/pictures/machine.jpg"
+		},
+		{
+			"name" : "Truque", 
+			"gender" : "female",
+			"left_ear" : "violet", 
+			"right_ear" : "jaune", 
+			"picture" : "/static/pictures/truque.jpg"
+		},
+		{
+			"name" : "Bidule", 
+			"gender" : "female",
+			"left_ear" : "vert", 
+			"right_ear" : "bleu", 
+			"picture" : "/static/pictures/bidule.jpg"
+		}
+	]
 }

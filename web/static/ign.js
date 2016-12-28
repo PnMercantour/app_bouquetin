@@ -1,10 +1,10 @@
 // Code snippet from IGN
 
 window.onload= function() {
-    $.getJSON("/static/conf.json", function(data) { // Load configuration from JSON file
+    $.getJSON("/static/conf.json", function(conf) { // Load configuration from JSON file
         Geoportal.load(
             "map-canvas",
-            [data.ign_api_key],
+            [conf.ign_api_key],
             {
                 lon: 7.128371,
                     lat: 44.145992

@@ -205,15 +205,25 @@ function set_block_data_and_behaviour($i) {
 			right_ear_select.append(get_default_option_value());
 			right_ear_select.append(get_unknown_option_value());
 
-			// Get every color possible
+			// If the left ear color is unknown, add every color to the right ear select
 			var $right_ear_possible_colors = [];
-			$ears_colors_dict[radio_gender_checked.val()]["ears"].forEach(function($ears_color) {
-				if ($ears_color.left == left_ear_select.val()) {
+			if (left_ear_select.val() == 'unknown') {
+				$ears_colors_dict[radio_gender_checked.val()]["ears"].forEach(function($ears_color) {
 					if ($.inArray($ears_color.right, $right_ear_possible_colors) == -1) {
-						$right_ear_possible_colors.push($ears_color.right);
+							$right_ear_possible_colors.push($ears_color.right);
+						}
+					});
+			}
+			// Else, get every right ear color that matches the left ear color already selected
+			else { 
+				$ears_colors_dict[radio_gender_checked.val()]["ears"].forEach(function($ears_color) {
+					if ($ears_color.left == left_ear_select.val()) {
+						if ($.inArray($ears_color.right, $right_ear_possible_colors) == -1) {
+							$right_ear_possible_colors.push($ears_color.right);
+						}
 					}
-				}
-			});
+				});
+			}
 
 			// Append the possible options to the right_ear select
 			$right_ear_possible_colors.forEach(function($possible_color){

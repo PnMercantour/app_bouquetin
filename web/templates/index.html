@@ -22,12 +22,17 @@
 		
 		<script 
 		    type="text/javascript" 
-		    src="static/page.js">
+		    src="static/js/jquery.serialize-object.js">
+		</script>
+
+		<script 
+		    type="text/javascript" 
+		    src="static/js/page.js">
 		</script>
 
 		<script async
 		    type="text/javascript" 
-		    src="static/ign.js">
+		    src="static/js/ign.js">
 		</script>
 
 		<script async
@@ -57,7 +62,7 @@
 							<h3>L'observateur</h3>
 	                        <div class="form-group">
 	                            <label for="name_surname">Nom et prénom</label>
-	                            <input type="text" class="form-control" id="name_surname" placeholder="Jean Dupont">
+	                            <input type="text" class="form-control" name="observer_name" id="name_surname" placeholder="Jean Dupont">
 	                        </div>
 	                    </div>
 	            	</div>
@@ -80,7 +85,7 @@
                                 
                             <div class="form-group">
                                 <label for="date">Nombre d'individus</label>
-                                <select class="form-control" id="number">
+                                <select class="form-control" name="number" id="number">
                                     <!-- Options added by page.js -->
                                 </select>
                             </div>
@@ -98,7 +103,7 @@
 
                 <div class="row">
                 	<div class="col-md-12 text-center">
-                		<button id="submit_button" value="Submit">Valider</button>
+                		<button id="submit_button" class="btn btn-primary" value="Submit">Valider</button>
                 	</div>
                 </div>
 

@@ -22,6 +22,14 @@ DB_PATH = VAR_DIR / 'db.sqlite'
 #     telephone = db.Column(db.String())
 
 
+
+
+#	STRUCTURE DE BASE : 
+# UN OBJET OBSERVATION QUI LIE A DES OBJETS ANIMAUX
+
+
+
+
 # db.create_all()
 
 

@@ -81,19 +81,17 @@ function add_form_block_for_each_animal() {
 		// DELETE BLOCKS 
 		if ($number_to_display < $number_displayed) {
 			for (var $i = $number_to_display; $i < $number_displayed ; $i++) {
-				var $id = $i+1;
-				div_global.find('div#individu_'+$id).remove();
+				div_global.find('div#individu_'+$i).remove();
 			}
 		}
 
 		// ADD BLOCKS
 		else if ($number_to_display > $number_displayed) {
 		    for (var $i = $number_displayed; $i < $number_to_display ; $i++) {
-		  		var $id = $i+1;
 
-		    	var block = $("<div class='animal-block row' id='individu_"+$id+"'/>");
+		    	var block = $("<div class='animal-block row' id='individu_"+$i+"'/>");
 		    	var left_col = $("<div class='col-md-5'/>");
-		    	var right_col = $("<div class='col-md-7' id='"+$id+"_identity'/>");
+		    	var right_col = $("<div class='col-md-7' id='"+$i+"_identity'/>");
 
 	    	// *** GENDER RADIO BUTTON *** //
 		    	var form_group_gender = $("<div class='form-group'/>");
@@ -102,11 +100,11 @@ function add_form_block_for_each_animal() {
 
 		    	var label_female = $("<label class='radio-inline'/>");
 
-		    	var input_radio_male = $("<input type='radio' value='male' name='animals["+$id+"][gender]'/>");
+		    	var input_radio_male = $("<input type='radio' value='male' name='animals["+$i+"][gender]'/>");
 		    	label_male.append(input_radio_male);
 		    	label_male.append('Mâle');
 				
-				var input_radio_female = $("<input type='radio' value='female' name='animals["+$id+"][gender]'/>");
+				var input_radio_female = $("<input type='radio' value='female' name='animals["+$i+"][gender]'/>");
 		    	label_female.append(input_radio_female);
 		    	label_female.append('Femelle');
 				
@@ -114,21 +112,21 @@ function add_form_block_for_each_animal() {
 		    	form_group_gender.append(label_female);
 
 	    	// *** EARS SELECTS *** //
-		    	var form_group_ears = $("<div id='"+$id+"_ears' class='form-group'/>");
+		    	var form_group_ears = $("<div id='"+$i+"_ears' class='form-group'/>");
 
-		    	var left_ear_select = $("<select class='form-control' name='animals["+$id+"][left_ear]'/>");
+		    	var left_ear_select = $("<select class='form-control' name='animals["+$i+"][left_ear]'/>");
 		    	form_group_ears.append("Boucle gauche : ");
 		    	form_group_ears.append(left_ear_select);
 
-		    	var right_ear_select = $("<select class='form-control' name='animals["+$id+"][right_ear]' disabled='true'/>");
+		    	var right_ear_select = $("<select class='form-control' name='animals["+$i+"][right_ear]' disabled='true'/>");
 		    	form_group_ears.append("Boucle droite : ");
 		    	form_group_ears.append(right_ear_select);
 
 		    	form_group_ears.hide();
 
 	    	// *** CHILD NUMBER *** //
-		    	var form_group_childs = $("<div class='form-group' id='"+$id+"_childs'/>");
-		    	var childs_select = $("<select class='form-control' name='animals["+$id+"][childs]'/>");
+		    	var form_group_childs = $("<div class='form-group' id='"+$i+"_childs'/>");
+		    	var childs_select = $("<select class='form-control' name='animals["+$i+"][childs]'/>");
 
 		    	// Append default and $UNKNOWN value
 		    	childs_select.append(get_default_option_value());
@@ -146,13 +144,17 @@ function add_form_block_for_each_animal() {
 
 		    	form_group_childs.hide();
 
+		    // *** NAME (HIDDEN) *** //
+		    	var animal_name = $("<input type='hidden' id='"+$i+"_name' name='animals["+$i+"][name]' value='"+$UNKNOWN+"'/>");
+
 
 	    	// *** CONSTRUCT BLOCK *** //
 		    	left_col.append(form_group_gender);
 		    	left_col.append(form_group_ears);
 		    	left_col.append(form_group_childs);
+		    	left_col.append(animal_name);
 
-		    	block.append("<h4 class='col-md-12' id='"+$id+"_name'>Individu "+$id+"</h4>");
+		    	block.append("<h4 class='col-md-12' id='"+$i+"_title'>Individu "+($i+1)+"</h4>");
 		    	block.append(left_col);
 		    	block.append(right_col);
 
@@ -173,26 +175,26 @@ function add_form_block_for_each_animal() {
 
 
 function set_block_data_and_behaviour($i) {
-	var $id = $i + 1;
-	var name = $("#"+$id+"_name");
-	var left_ear_select = $("select[name='animals["+$id+"][left_ear]']");
-	var right_ear_select = $("select[name='animals["+$id+"][right_ear]']");
-	var childs_select = $("#"+$id+"_childs");
-	var identity = $("#"+$id+"_identity");
+	var name = $("#"+$i+"_title");
+	var left_ear_select = $("select[name='animals["+$i+"][left_ear]']");
+	var right_ear_select = $("select[name='animals["+$i+"][right_ear]']");
+	var childs_select = $("#"+$i+"_childs");
+	var animal_name = $("#"+$i+"_name"); // Hidden field
+	var identity = $("#"+$i+"_identity");
 
 	// Set listener on radio button gender to change the display of the ears selects and child selects
-	$("input[name='animals["+$id+"][gender]']").click(function() {
-		var radio_gender_checked = $("input[name='animals["+$id+"][gender]']:checked");
+	$("input[name='animals["+$i+"][gender]']").click(function() {
+		var radio_gender_checked = $("input[name='animals["+$i+"][gender]']:checked");
 
 		// Display ears selects, empty the animal's details and disable the right_ear select
-		$("#"+$id+"_ears").show();
+		$("#"+$i+"_ears").show();
 		left_ear_select.empty();
 		right_ear_select.empty();
 		right_ear_select.prop("disabled", true);
 
 		// Remove animal picture and reset its name
 		identity.empty();
-		name.text("Individu "+$id);
+		name.text("Individu "+($i+1));
 
 		// Depending on the radio button gender value, set the correspondant colors in left_ear select
 		if (radio_gender_checked.val() == "male") {
@@ -202,12 +204,12 @@ function set_block_data_and_behaviour($i) {
 			}).prop('selected', true);
 
 			childs_select.hide();
-			set_left_ears_select_options($id, "male");
+			set_left_ears_select_options($i, "male");
 		}
 
 		else if (radio_gender_checked.val() == "female") {
 			childs_select.show();
-			set_left_ears_select_options($id, "female");
+			set_left_ears_select_options($i, "female");
 		}
 
 
@@ -219,10 +221,10 @@ function set_block_data_and_behaviour($i) {
 
 			// Remove animal picture and reset its name
 			identity.empty();
-			name.text("Individu "+$id);
+			name.text("Individu "+$i);
 
 			// Append default and $UNKNOWN value
-			right_ear_select.append(get_default_option_value());
+			right_ear_select.append(get_none_option_value());
 			right_ear_select.append(get_unknown_option_value());
 
 			// If the left ear color is $UNKNOWN, add every color to the right ear select
@@ -258,7 +260,7 @@ function set_block_data_and_behaviour($i) {
 			right_ear_select.change(function() {
 				// Remove animal picture and reset its name
 				identity.empty();
-				name.text("Individu "+$id);
+				name.text("Individu "+($i+1));
 
 				if (right_ear_select.val() != $UNKNOWN && left_ear_select.val() != $UNKNOWN) {
 					var $selected_animal;
@@ -274,6 +276,7 @@ function set_block_data_and_behaviour($i) {
 					if ($selected_animal != undefined) {
 						if ($selected_animal.name != undefined) {
 							name.text($selected_animal.name);
+							animal_name.val($selected_animal.name);
 						}
 						if ($selected_animal.picture != undefined) {
 							identity.append("<img src='" +$conf.animals_pictures_dir+$selected_animal.picture+ "' class='animal-img img-rounded'/>");
@@ -290,7 +293,7 @@ function set_left_ears_select_options($id, $gender) {
 	var left_ear_select = $("select[name='animals["+$id+"][left_ear]']");
 
 	// Append default and unknwon value
-	left_ear_select.append(get_default_option_value());
+	left_ear_select.append(get_none_option_value());
 	left_ear_select.append(get_unknown_option_value());
 
 	// Append every color possible
@@ -313,16 +316,25 @@ function get_default_option_value() {
 }
 
 
+function get_none_option_value() {
+	return $('<option>', { 
+        value: $UNDEFINED,
+        text : "Non marqué", 
+        selected: "selected"
+    });
+}
+
+
 function get_unknown_option_value() {
 	return $('<option>', { 
         value: $UNKNOWN,
-        text : "Inconnu"
+        text : "Non identifiable"
     });
 }
 
 
 function submit_button() {
 	$("#submit_button").click(function() {
-		console.log($("#form").serializeObject());
+		console.log(JSON.stringify($("#form").serializeObject()));
 	});
 }

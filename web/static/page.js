@@ -1,12 +1,19 @@
+// CONSTANTS
+$UNKNOWN = 'unknown';
+$UNDEFINED = 'undefined';
+
+
 $(document).ready(function(){
 	$.getJSON("/static/conf.json")
 		.done(function(data) { // Loads configuration from JSON file
-			conf = data;
+			$conf = data;
 			initialize_datepicker();
 			initialize_select_number();
 			initialize_ear_colors_dict();
 
 			add_form_block_for_each_animal();
+
+			submit_button();
 		})
 		.fail(function() {
 			alert("ERROR : Failed to load configuration file ! ");
@@ -15,7 +22,7 @@ $(document).ready(function(){
 
 
 function initialize_select_number() {
-	Array.from(Array(conf.animal_max_number + 1).keys()).forEach(function (i) {
+	Array.from(Array($conf.animal_max_number + 1).keys()).forEach(function (i) {
 	    $("#number").append($('<option>', { 
 	        value: i,
 	        text : i 
@@ -36,16 +43,14 @@ function initialize_ear_colors_dict() {
 		}
 	}; 
 
-	conf.animals.forEach(function($animal) {
-		$animal_left_ear_cap = capitalize($animal.left_ear);
-
-		if ($.inArray($animal_left_ear_cap, $ears_colors_dict[$animal.gender]["left_ears"]) == -1) {
-			$ears_colors_dict[$animal.gender]["left_ears"].push($animal_left_ear_cap);
+	$conf.animals.forEach(function($animal) {
+		if ($.inArray($animal.left_ear, $ears_colors_dict[$animal.gender]["left_ears"]) == -1) {
+			$ears_colors_dict[$animal.gender]["left_ears"].push($animal.left_ear);
 		}
 
 		$ears_colors_dict[$animal.gender]["ears"].push({ 
-			"left": $animal_left_ear_cap, 
-			"right": capitalize($animal.right_ear) 
+			"left": $animal.left_ear, 
+			"right": $animal.right_ear
 		});	
 	});
 }
@@ -86,7 +91,9 @@ function add_form_block_for_each_animal() {
 		    for (var $i = $number_displayed; $i < $number_to_display ; $i++) {
 		  		var $id = $i+1;
 
-		    	var block = $("<div id='individu_"+$id+"'/>");
+		    	var block = $("<div class='animal-block row' id='individu_"+$id+"'/>");
+		    	var left_col = $("<div class='col-md-5'/>");
+		    	var right_col = $("<div class='col-md-7' id='"+$id+"_identity'/>");
 
 	    	// *** GENDER RADIO BUTTON *** //
 		    	var form_group_gender = $("<div class='form-group'/>");
@@ -123,12 +130,12 @@ function add_form_block_for_each_animal() {
 		    	var form_group_childs = $("<div class='form-group' id='"+$id+"_childs'/>");
 		    	var childs_select = $("<select class='form-control' name='animals["+$id+"][childs]'/>");
 
-		    	// Append default and unknown value
+		    	// Append default and $UNKNOWN value
 		    	childs_select.append(get_default_option_value());
 		    	childs_select.append(get_unknown_option_value());
 
 		    	// Append all possible options
-		    	["0", "1", "2"].forEach(function (i) {
+		    	$conf.childs_possible_values.forEach(function (i) {
 				    childs_select.append($('<option>', { 
 				        value: i,
 				        text : i 
@@ -141,10 +148,13 @@ function add_form_block_for_each_animal() {
 
 
 	    	// *** CONSTRUCT BLOCK *** //
-		    	block.append("<h4>Individu "+$id+"</h4>");
-		    	block.append(form_group_gender);
-		    	block.append(form_group_ears);
-		    	block.append(form_group_childs);
+		    	left_col.append(form_group_gender);
+		    	left_col.append(form_group_ears);
+		    	left_col.append(form_group_childs);
+
+		    	block.append("<h4 class='col-md-12' id='"+$id+"_name'>Individu "+$id+"</h4>");
+		    	block.append(left_col);
+		    	block.append(right_col);
 
 		    	blocks.push(block);
 		    }
@@ -164,9 +174,11 @@ function add_form_block_for_each_animal() {
 
 function set_block_data_and_behaviour($i) {
 	var $id = $i + 1;
+	var name = $("#"+$id+"_name");
 	var left_ear_select = $("select[name='animals["+$id+"][left_ear]']");
 	var right_ear_select = $("select[name='animals["+$id+"][right_ear]']");
 	var childs_select = $("#"+$id+"_childs");
+	var identity = $("#"+$id+"_identity");
 
 	// Set listener on radio button gender to change the display of the ears selects and child selects
 	$("input[name='animals["+$id+"][gender]']").click(function() {
@@ -178,11 +190,15 @@ function set_block_data_and_behaviour($i) {
 		right_ear_select.empty();
 		right_ear_select.prop("disabled", true);
 
+		// Remove animal picture and reset its name
+		identity.empty();
+		name.text("Individu "+$id);
+
 		// Depending on the radio button gender value, set the correspondant colors in left_ear select
 		if (radio_gender_checked.val() == "male") {
 			// Reset the childs select to default option
 			childs_select.filter(function() { 
-				return $(this).text() == "undefined";
+				return $(this).text() == $UNDEFINED;
 			}).prop('selected', true);
 
 			childs_select.hide();
@@ -201,13 +217,17 @@ function set_block_data_and_behaviour($i) {
 			right_ear_select.prop("disabled", false);
 			right_ear_select.empty();
 
-			// Append default and unknown value
+			// Remove animal picture and reset its name
+			identity.empty();
+			name.text("Individu "+$id);
+
+			// Append default and $UNKNOWN value
 			right_ear_select.append(get_default_option_value());
 			right_ear_select.append(get_unknown_option_value());
 
-			// If the left ear color is unknown, add every color to the right ear select
+			// If the left ear color is $UNKNOWN, add every color to the right ear select
 			var $right_ear_possible_colors = [];
-			if (left_ear_select.val() == 'unknown') {
+			if (left_ear_select.val() == $UNKNOWN) {
 				$ears_colors_dict[radio_gender_checked.val()]["ears"].forEach(function($ears_color) {
 					if ($.inArray($ears_color.right, $right_ear_possible_colors) == -1) {
 							$right_ear_possible_colors.push($ears_color.right);
@@ -232,6 +252,35 @@ function set_block_data_and_behaviour($i) {
 			        text : $possible_color
 			    }));
 			});
+
+
+			// Set listener on right_ear select to add the name and picture of a matched animal
+			right_ear_select.change(function() {
+				// Remove animal picture and reset its name
+				identity.empty();
+				name.text("Individu "+$id);
+
+				if (right_ear_select.val() != $UNKNOWN && left_ear_select.val() != $UNKNOWN) {
+					var $selected_animal;
+
+					$conf.animals.forEach(function($animal) {
+						if (left_ear_select.val() == $animal.left_ear && 
+							right_ear_select.val() == $animal.right_ear && 
+							radio_gender_checked.val() == $animal.gender) {
+							$selected_animal = $animal;
+						}
+					});
+
+					if ($selected_animal != undefined) {
+						if ($selected_animal.name != undefined) {
+							name.text($selected_animal.name);
+						}
+						if ($selected_animal.picture != undefined) {
+							identity.append("<img src='" +$conf.animals_pictures_dir+$selected_animal.picture+ "' class='animal-img img-rounded'/>");
+						}
+					}
+				}
+			});
 		});
 	});
 }
@@ -254,14 +303,16 @@ function set_left_ears_select_options($id, $gender) {
 }
 
 
-function capitalize ($string) {
-	return $string.substr(0,1).toUpperCase() + $string.substr(1)
+function submit_button() {
+	$("#submit_button").click(function() {
+		alert("CLICK");
+	});
 }
 
 
 function get_default_option_value() {
 	return $('<option>', { 
-        value: "undefined",
+        value: $UNDEFINED,
         text : "Sélectionner ...", 
         disabled : "true",
         selected: "selected"
@@ -271,7 +322,7 @@ function get_default_option_value() {
 
 function get_unknown_option_value() {
 	return $('<option>', { 
-        value: "unknown",
+        value: $UNKNOWN,
         text : "Inconnu"
     });
 }

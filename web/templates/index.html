@@ -3,7 +3,38 @@
     <head>
         <title>Où est mon bouquetin ?</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <link rel="stylesheet" href="/static/bootstrap.css">
+
+        <!-- STYLESHEETS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+        <link rel="stylesheet" href="/static/css/bootstrap.css">
+   		<link rel="stylesheet" href="/static/css/style.css">
+
+   		<!-- SCRIPTS -->
+   		<script 
+		    type="text/javascript" 
+		    src="http://code.jquery.com/jquery-3.1.1.min.js">
+		</script>
+
+		<script 
+		    type="text/javascript" 
+		    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js">
+		</script> 
+		
+		<script 
+		    type="text/javascript" 
+		    src="static/page.js">
+		</script>
+
+		<script async
+		    type="text/javascript" 
+		    src="static/ign.js">
+		</script>
+
+		<script async
+		    type="text/javascript"
+		    src="http://api.ign.fr/geoportail/api/js/latest/Geoportal.js"
+		    charset="utf-8">
+		</script>
     </head>
 
 
@@ -12,78 +43,73 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
-                        <h1>Observation d'un groupe de bouquetin</h1>
-                        <form>
-                            <h3>L'observation</h3>
+                    	<div class="header">
+	                    	<img src="/static/images/logo_pnm_vert.png" class="img-responsive" alt="Logo PNM"/>
+	                        <h1>Observation d'un groupe de bouquetin</h1>
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+				<form id="form">
+					<div class="row">
+						<div class="col-md-12">
+							<h3>L'observateur</h3>
+	                        <div class="form-group">
+	                            <label for="name_surname">Nom et prénom</label>
+	                            <input type="text" class="form-control" id="name_surname" placeholder="Jean Dupont">
+	                        </div>
+	                    </div>
+	            	</div>
+
+	                <div class="row">
+	                    <div class="col-md-2">
+	                    <h3>L'observation</h3>
                             <div class="form-group">
                                 <label for="date">Date</label>
                                 <input type="datetime" class="form-control" id="date" name="date" placeholder="01/01/2000">
                             </div>
                             
                             <label for="place-north">Position des individus</label>
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <span id="helpBlock" class="help-block">Projection Lambert 93 (EPSG:2154)</span>
-                                        <input type="text" class="form-control" id="place-north" name="place-north" placeholder="0" disabled> 
-                                        <br>
-                                        <input type="text" class="form-control" id="place-east" name="place-east" placeholder="0" disabled> 
-                                    </div>
-                                </div>
-                                <div class="col-md-10">
-                                    <div id="map-canvas" style="height:600px;text-align:'center'"></div>
-                                </div>
+                            <div class="form-group">
+                                <span id="helpBlock" class="help-block">Projection Lambert 93 (EPSG:2154)</span>
+                                <input type="text" class="form-control" id="place-north" name="place-north" placeholder="0" disabled> 
+                                <br>
+                                <input type="text" class="form-control" id="place-east" name="place-east" placeholder="0" disabled>
                             </div>
-                            
+                                
                             <div class="form-group">
                                 <label for="date">Nombre d'individus</label>
                                 <select class="form-control" id="number">
                                     <!-- Options added by page.js -->
                                 </select>
                             </div>
-                            
-                            <div id="animals_details">
-                                
-                            </div>
+	                    </div>
 
-                            <h3>L'observateur</h3>
-                            <div class="form-group">
-                                <label for="name_surname">Nom et prénom</label>
-                                <input type="text" class="form-control" id="name_surname" placeholder="Jean Dupont">
-                            </div>
-                        </form>
+	                    <div class="col-md-10">
+							<div id="map-canvas"></div>
+						</div>
+					</div>
 
+					<div class="row" id="animals_details_row">
+                        <div class="col-md-12" id="animals_details"></div>
                     </div>
+                </form>
+
+                <div class="row">
+                	<div class="col-md-12 text-center">
+                		<button id="submit_button" value="Submit">Valider</button>
+                	</div>
+                </div>
+
+                <div class="row">
+                	<div class="col-md-12 text-center footer">
+                		<p>
+                			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                		</p>
+                	</div>
                 </div>
             </div>
         </div>
     </body>
 </html>
-
-
-<script 
-    type="text/javascript" 
-    src="http://code.jquery.com/jquery-3.1.1.min.js">
-</script>
-
-<script 
-    type="text/javascript" 
-    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js">
-</script> 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
-
-<script 
-    type="text/javascript" 
-    src="static/page.js">
-</script>
-
-<script 
-    type="text/javascript" 
-    src="static/ign.js">
-</script>
-
-<script
-    type="text/javascript"
-    src="http://api.ign.fr/geoportail/api/js/latest/Geoportal.js"
-    charset="utf-8">
-</script>

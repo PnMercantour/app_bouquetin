@@ -1,48 +1,99 @@
 {
 	"ign_api_key": "0ldfl0m1mud840h6oggz9y95", 
 	"animal_max_number" : 25, 
+	"childs_possible_values" : ["0", "1", "2"],
+	"animals_pictures_dir" : "/static/pictures/",
 	"animals" : [ 
 		{
-			"name" : "Machin", 
-			"gender" : "male",
-			"left_ear" : "bleu", 
-			"right_ear" : "jaune", 
-			"picture" : "/static/pictures/machin.jpg"
-		},
-		{
-			"name" : "Truc", 
-			"gender" : "male",
-			"left_ear" : "bleu", 
-			"right_ear" : "rouge", 
-			"picture" : "/static/pictures/truc.jpg"
-		},
-		{
-			"name" : "Bidul", 
-			"gender" : "male",
-			"left_ear" : "rouge", 
-			"right_ear" : "jaune", 
-			"picture" : "/static/pictures/bidul.jpg"
-		}, 
-		{
-			"name" : "Machine", 
+			"name" : "Merveilles", 
 			"gender" : "female",
-			"left_ear" : "violet", 
-			"right_ear" : "bleu", 
-			"picture" : "/static/pictures/machine.jpg"
+			"left_ear" : "Blanc", 
+			"right_ear" : "Violet", 
+			"picture" : "merveilles.jpg"
 		},
 		{
-			"name" : "Truque", 
+			"name" : "Bise", 
 			"gender" : "female",
-			"left_ear" : "violet", 
-			"right_ear" : "jaune", 
-			"picture" : "/static/pictures/truque.jpg"
+			"left_ear" : "Blanc", 
+			"right_ear" : "Bleu", 
+			"picture" : "bise.jpg"
 		},
 		{
-			"name" : "Bidule", 
+			"name" : "Roya", 
 			"gender" : "female",
-			"left_ear" : "vert", 
-			"right_ear" : "bleu", 
-			"picture" : "/static/pictures/bidule.jpg"
+			"left_ear" : "Bleu", 
+			"right_ear" : "Jaune", 
+			"picture" : "roya.jpg"
+		},
+		{
+			"name" : "Lucille", 
+			"gender" : "female",
+			"left_ear" : "Vert", 
+			"right_ear" : "Blanc", 
+			"picture" : "lucille.jpg"
+		},
+		{
+			"name" : "Jump", 
+			"gender" : "male",
+			"left_ear" : "Vert", 
+			"right_ear" : "Blanc", 
+			"picture" : "jump.jpg"
+		},
+		{
+			"name" : "Piercing", 
+			"gender" : "male",
+			"left_ear" : "Blanc", 
+			"right_ear" : "Non marqué", 
+			"picture" : "piercing.jpg"
+		},
+		{
+			"name" : "Choupinet", 
+			"gender" : "male",
+			"left_ear" : "Violet", 
+			"right_ear" : "Bleu", 
+			"picture" : "choupinet.jpg"
+		},
+		{
+			"name" : "Bou", 
+			"gender" : "male",
+			"left_ear" : "Blanc", 
+			"right_ear" : "Rouge", 
+			"picture" : "bou.jpg"
+		},
+		{
+			"name" : "Jo", 
+			"gender" : "male",
+			"left_ear" : "Violet", 
+			"right_ear" : "Violet", 
+			"picture" : "jo.jpg"
+		},
+		{
+			"name" : "Luc Alphand", 
+			"gender" : "male",
+			"left_ear" : "Rouge", 
+			"right_ear" : "Vert", 
+			"picture" : "luc_alphand.jpg"
+		},
+		{
+			"name" : "Rocco", 
+			"gender" : "male",
+			"left_ear" : "Blanc", 
+			"right_ear" : "Jaune", 
+			"picture" : "rocco.jpg"
+		},
+		{
+			"name" : "Steph", 
+			"gender" : "male",
+			"left_ear" : "Rouge", 
+			"right_ear" : "Jaune", 
+			"picture" : "steph.jpg"
+		},
+		{
+			"name" : "Thomas", 
+			"gender" : "male",
+			"left_ear" : "Vert", 
+			"right_ear" : "Vert", 
+			"picture" : "thomas.jpg"
 		}
 	]
 }

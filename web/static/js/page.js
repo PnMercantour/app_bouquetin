@@ -1,7 +1,7 @@
 // CONSTANTS
 $UNKNOWN = 'unknown';
 $UNDEFINED = 'undefined';
-
+$NONE = 'none';
 
 $(document).ready(function(){
 	$.getJSON("/static/conf.json")
@@ -118,7 +118,7 @@ function add_form_block_for_each_animal() {
 		    	form_group_ears.append("Boucle gauche : ");
 		    	form_group_ears.append(left_ear_select);
 
-		    	var right_ear_select = $("<select class='form-control' name='animals["+$i+"][right_ear]' disabled='true'/>");
+		    	var right_ear_select = $("<select class='form-control' name='animals["+$i+"][right_ear]'/>");
 		    	form_group_ears.append("Boucle droite : ");
 		    	form_group_ears.append(right_ear_select);
 
@@ -186,11 +186,11 @@ function set_block_data_and_behaviour($i) {
 	$("input[name='animals["+$i+"][gender]']").click(function() {
 		var radio_gender_checked = $("input[name='animals["+$i+"][gender]']:checked");
 
-		// Display ears selects, empty the animal's details and disable the right_ear select
+		// Display ears selects, empty the ear selects
 		$("#"+$i+"_ears").show();
 		left_ear_select.empty();
 		right_ear_select.empty();
-		right_ear_select.prop("disabled", true);
+		
 
 		// Remove animal picture and reset its name
 		identity.empty();
@@ -212,16 +212,18 @@ function set_block_data_and_behaviour($i) {
 			set_left_ears_select_options($i, "female");
 		}
 
+		// Add only the none option to the right ear select, so the options none none are displayed by default
+		right_ear_select.append(get_none_option_value());
+
 
 		// Set listener on left_ear select to change right_ear select options
 		left_ear_select.change(function() {
-			// Able right ear select and empty its possible options
-			right_ear_select.prop("disabled", false);
+			// Empty the right ear select possible options
 			right_ear_select.empty();
 
 			// Remove animal picture and reset its name
 			identity.empty();
-			name.text("Individu "+$i);
+			name.text("Individu "+($i+1));
 
 			// Append default and $UNKNOWN value
 			right_ear_select.append(get_none_option_value());
@@ -318,7 +320,7 @@ function get_default_option_value() {
 
 function get_none_option_value() {
 	return $('<option>', { 
-        value: $UNDEFINED,
+        value: $NONE,
         text : "Non marqué", 
         selected: "selected"
     });

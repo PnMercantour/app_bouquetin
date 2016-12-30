@@ -43,3 +43,7 @@ div#animals_details_row {
 	margin-left: 0px;
 	margin-right: 0px;
 }
+
+button#submit_button {
+	font-size: 200%;
+}

@@ -337,6 +337,30 @@ function get_unknown_option_value() {
 
 function submit_button() {
 	$("#submit_button").click(function() {
-		console.log(JSON.stringify($("#form").serializeObject()));
+		$(this).button('loading');
+
+		// Send data to backend
+		$.ajax({
+			url: $conf.backend_url+"/obs", 
+			type: 'put', 
+			data: JSON.stringify($("#form").serializeObject()), 
+			dataType: 'json', 
+			contentType: 'application/json; charset=UTF-8',
+
+			success: function(data, status) {
+				console.log("SUCCESS");
+				console.log(data);
+				console.log(status);
+				window.location.replace("http://stackoverflow.com");
+			}, 
+			error: function(result, status, error) {
+				console.log("ERROR");
+				console.log(result);
+				console.log(status);
+				console.log(error);
+			}
+		});
+
+		$(this).button('reset');
 	});
 }

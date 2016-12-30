@@ -1,6 +1,6 @@
 from pathlib import Path
-from flask import Flask, render_template, request, redirect
-# from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template, request, redirect, abort, Response
+from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)  # Convention Flask
@@ -9,28 +9,24 @@ PROJECT_DIR = Path(__file__).absolute().parent
 VAR_DIR = PROJECT_DIR.parent / 'var'
 DB_PATH = VAR_DIR / 'db.sqlite'
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + str(DB_PATH)
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + str(DB_PATH)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# db = SQLAlchemy(app)
-
-
-# class Contact(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     nom = db.Column(db.String())
-#     prenom = db.Column(db.String())
-#     telephone = db.Column(db.String())
+db = SQLAlchemy(app)
 
 
-
-
-#	STRUCTURE DE BASE : 
-# UN OBJET OBSERVATION QUI LIE A DES OBJETS ANIMAUX
+class Observation(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.String())
+    number = db.Column(db.String())
+    observer_name = db.Column(db.String())
+    coord_north = db.Column(db.String())
+    coord_east = db.Column(db.String())
 
 
 
 
-# db.create_all()
+db.create_all()
 
 
 @app.route('/', methods=['GET'])
@@ -39,15 +35,27 @@ def index():
 
 
 
-@app.route('/contact/create', methods=['POST'])
-def create_contact():
-    new_contact = Contact(
-        nom=request.form['nom'].upper(),
-        prenom=request.form['prenom'].title(),
-        telephone=request.form['telephone'])
-    db.session.add(new_contact)
-    db.session.commit()
-    return redirect('/contact/' + str(new_contact.id))
+@app.route('/obs', methods=['PUT'])
+def create_obs():
+    if True :
+        new_obs = Observation(
+            date = request.json['date'],
+            number = request.json['number'],
+            observer_name = request.json['observer_name'].title(), 
+            coord_north = request.json['coord']['north'], 
+            coord_east = request.json['coord']['east'])
+
+        db.session.add(new_obs)
+        db.session.commit()
+
+        print(request.json)
+
+        return Response('{"message":"OK"}', status=200)
+
+
+    else :
+        abort(400)
+    
 
 
 if __name__ == '__main__':

@@ -1,5 +1,6 @@
 {
 	"ign_api_key": "0ldfl0m1mud840h6oggz9y95", 
+	"backend_url": "http://192.168.98.174:5000",
 	"animal_max_number" : 25, 
 	"childs_possible_values" : ["0", "1", "2"],
 	"animals_pictures_dir" : "/static/pictures/",

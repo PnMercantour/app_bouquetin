@@ -43,10 +43,10 @@ window.onload= function() {
                             var lonlat= this.map.getLonLatFromViewPortPx(e.xy).transform(
                                 this.map.getProjection(), new OpenLayers.Projection("EPSG:2154")
                             );
-                            $('input[name=place-north]').val(lonlat.lon);
-                            $('input[name=place-east]').val(lonlat.lat);
+                            $('#coord_north').val(lonlat.lon);
+                            $('#coord_east').val(lonlat.lat);
 
-                            // Move the marker
+                            // Moves the marker
                             this.map.addLayer(markers);
                             markers.clearMarkers();
                             markers.addMarker(new OpenLayers.Marker(this.map.getLonLatFromViewPortPx(e.xy)));

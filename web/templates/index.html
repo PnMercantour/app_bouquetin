@@ -35,6 +35,11 @@
 		    src="static/js/ign.js">
 		</script>
 
+		<script
+		    type="text/javascript" 
+		    src="static/js/bootstrap.js">
+		</script>
+
 		<script async
 		    type="text/javascript"
 		    src="http://api.ign.fr/geoportail/api/js/latest/Geoportal.js"
@@ -75,16 +80,22 @@
                                 <input type="datetime" class="form-control" id="date" name="date" placeholder="01/01/2000">
                             </div>
                             
-                            <label for="place-north">Position des individus</label>
                             <div class="form-group">
-                                <span id="helpBlock" class="help-block">Projection Lambert 93 (EPSG:2154)</span>
-                                <input type="text" class="form-control" id="place-north" name="place-north" placeholder="0" disabled> 
+                            	<label for="coord_north">Position des individus</label>
+                                <span id="helpBlock" class="help-block"><i>Projection Lambert 93</i></span>
+                                <div class="input-group">
+                                	<input type="text" class="form-control" id="coord_north" name="coord[north]" placeholder="0" title="Vous pouvez aussi cliquer sur la carte"> 
+                                	<span class="input-group-addon" id="coord_north_addon">N</span>
+                                </div>
                                 <br>
-                                <input type="text" class="form-control" id="place-east" name="place-east" placeholder="0" disabled>
+                                <div class="input-group">
+                                	<input type="text" class="form-control" id="coord_east" name="coord[east]" placeholder="0" title="Vous pouvez aussi cliquer sur la carte">
+                                	<span class="input-group-addon" id="coord_east_addon">E</span>
+                                </div>
                             </div>
                                 
                             <div class="form-group">
-                                <label for="date">Nombre d'individus</label>
+                                <label for="number">Nombre d'individus</label>
                                 <select class="form-control" name="number" id="number">
                                     <!-- Options added by page.js -->
                                 </select>
@@ -103,7 +114,7 @@
 
                 <div class="row">
                 	<div class="col-md-12 text-center">
-                		<button id="submit_button" class="btn btn-primary" value="Submit">Valider</button>
+                		<button id="submit_button" class="btn btn-primary" data-loading-text="Validation ...">Valider</button>
                 	</div>
                 </div>
 

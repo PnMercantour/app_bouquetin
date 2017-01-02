@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, abort, Response
 from flask_sqlalchemy import SQLAlchemy
 
 
-app = Flask(__name__)  # Convention Flask
+app = Flask(__name__) 
 
 PROJECT_DIR = Path(__file__).absolute().parent
 VAR_DIR = PROJECT_DIR.parent / 'var'

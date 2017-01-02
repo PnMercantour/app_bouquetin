@@ -26,12 +26,20 @@
 
 
     <body>
-	    <div class="alert alert-success alert-dismissable" id="alert_success">
-	    	Bandeau d’alerte - la classe success
-	    </div> 
-
-        <div class="bootstrap-iso">
+	    <div class="bootstrap-iso">
             <div class="container-fluid">
+	            <div class="row">
+                    <div class="col-md-12">
+		            	<div class="alert alert-success" id="alert_success" role="alert">
+					    	<h3>Observation ajouté !</h3>
+					    	<button type="button" class="btn btn-success" href="#">Saisir une nouvelle observation</button>
+					    </div> 
+					    <div class="alert alert-danger" id="alert_error" role="alert">
+					    	<h3>Un problème est survenu lors de la sauvegarde :</h3>
+					    	<p id="error_details"></p>
+					    </div>
+					</div>
+				</div>
                 <div class="row">
                     <div class="col-md-12">
                     	<div class="header">
@@ -121,7 +129,7 @@
 
                 <div class="row">
                 	<div class="col-md-12 text-center">
-                		<button id="submit_button" class="btn btn-primary" data-loading-text="Validation ...">Valider</button>
+                		<button id="submit_button" class="btn btn-primary" data-loading-text="Validation ..." data-complete-text="Validé">Valider</button>
                 	</div>
                 </div>
 

@@ -14,6 +14,7 @@
 			"gender" : "female",
 			"left_ear" : "Blanc", 
 			"right_ear" : "Violet", 
+			"catch_date" : "26/04/2016",
 			"picture" : "merveilles.jpg"
 		},
 		{
@@ -21,6 +22,7 @@
 			"gender" : "female",
 			"left_ear" : "Blanc", 
 			"right_ear" : "Bleu", 
+			"catch_date" : "26/04/2016",
 			"picture" : "bise.jpg"
 		},
 		{
@@ -28,13 +30,15 @@
 			"gender" : "female",
 			"left_ear" : "Bleu", 
 			"right_ear" : "Jaune", 
+			"catch_date" : "26/04/2016",
 			"picture" : "roya.jpg"
 		},
 		{
 			"name" : "Lucille", 
 			"gender" : "female",
 			"left_ear" : "Vert", 
-			"right_ear" : "Blanc", 
+			"right_ear" : "Blanc",
+			"catch_date" : "26/04/2016", 
 			"picture" : "lucille.jpg"
 		},
 		{
@@ -42,6 +46,7 @@
 			"gender" : "male",
 			"left_ear" : "Vert", 
 			"right_ear" : "Blanc", 
+			"catch_date" : "26/04/2016",
 			"picture" : "jump.jpg"
 		},
 		{
@@ -49,6 +54,7 @@
 			"gender" : "male",
 			"left_ear" : "Blanc", 
 			"right_ear" : "Aucune", 
+			"catch_date" : "27/04/2016",
 			"picture" : "piercing.jpg"
 		},
 		{
@@ -56,6 +62,7 @@
 			"gender" : "male",
 			"left_ear" : "Violet", 
 			"right_ear" : "Bleu", 
+			"catch_date" : "27/04/2016",
 			"picture" : "choupinet.jpg"
 		},
 		{
@@ -63,6 +70,7 @@
 			"gender" : "male",
 			"left_ear" : "Blanc", 
 			"right_ear" : "Rouge", 
+			"catch_date" : "27/04/2016",
 			"picture" : "bou.jpg"
 		},
 		{
@@ -70,6 +78,7 @@
 			"gender" : "male",
 			"left_ear" : "Violet", 
 			"right_ear" : "Violet", 
+			"catch_date" : "24/04/2015",
 			"picture" : "jo.jpg"
 		},
 		{
@@ -77,6 +86,7 @@
 			"gender" : "male",
 			"left_ear" : "Rouge", 
 			"right_ear" : "Vert", 
+			"catch_date" : "26/04/2016",
 			"picture" : "luc_alphand.jpg"
 		},
 		{
@@ -84,6 +94,7 @@
 			"gender" : "male",
 			"left_ear" : "Blanc", 
 			"right_ear" : "Jaune", 
+			"catch_date" : "27/04/2016",
 			"picture" : "rocco.jpg"
 		},
 		{
@@ -91,14 +102,104 @@
 			"gender" : "male",
 			"left_ear" : "Rouge", 
 			"right_ear" : "Jaune", 
+			"catch_date" : "29/04/2015",
 			"picture" : "steph.jpg"
 		},
 		{
 			"name" : "Thomas", 
 			"gender" : "male",
+			"left_ear" : "Pistache", 
+			"right_ear" : "Pistache", 
+			"catch_date" : "27/04/2016",
+			"picture" : "thomas.jpg"
+		}, 
+		{
+			"name" : "Pompon", 
+			"gender" : "male",
 			"left_ear" : "Vert", 
 			"right_ear" : "Vert", 
-			"picture" : "thomas.jpg"
+			"catch_date" : "28/04/2015",
+			"picture" : "none.jpg"
+		},
+		{
+			"name" : "Pomponette", 
+			"gender" : "female",
+			"left_ear" : "Violet", 
+			"right_ear" : "Violet", 
+			"catch_date" : "28/04/2015",
+			"picture" : "none.jpg"
+		},
+		{
+			"name" : "Lorraine", 
+			"gender" : "female",
+			"left_ear" : "Vert", 
+			"right_ear" : "Vert", 
+			"catch_date" : "28/04/2015",
+			"picture" : "none.jpg"
+		},
+		{
+			"name" : "Marie", 
+			"gender" : "female",
+			"left_ear" : "Rouge", 
+			"right_ear" : "Rouge", 
+			"catch_date" : "28/04/2015",
+			"picture" : "none.jpg"
+		},
+		{
+			"name" : "Monsieur Delacour", 
+			"gender" : "male",
+			"left_ear" : "Bleu", 
+			"right_ear" : "Bleu", 
+			"catch_date" : "28/04/2015",
+			"picture" : "none.jpg"
+		},
+		{
+			"name" : "Silou", 
+			"gender" : "female",
+			"left_ear" : "Bleu", 
+			"right_ear" : "Bleu", 
+			"catch_date" : "28/04/2015",
+			"picture" : "none.jpg"
+		},
+		{
+			"name" : "Nath", 
+			"gender" : "male",
+			"left_ear" : "Jaune", 
+			"right_ear" : "Rouge", 
+			"catch_date" : "28/04/2015",
+			"picture" : "none.jpg"
+		},
+		{
+			"name" : "Patrick", 
+			"gender" : "male",
+			"left_ear" : "Rouge", 
+			"right_ear" : "Rouge", 
+			"catch_date" : "29/04/2015",
+			"picture" : "none.jpg"
+		},
+		{
+			"name" : "Neige", 
+			"gender" : "male",
+			"left_ear" : "Blanc", 
+			"right_ear" : "Blanc", 
+			"catch_date" : "29/04/2015",
+			"picture" : "none.jpg"
+		},
+		{
+			"name" : "Guillaumette", 
+			"gender" : "female",
+			"left_ear" : "Blanc", 
+			"right_ear" : "Blanc", 
+			"catch_date" : "26/04/2016",
+			"picture" : "none.jpg"
+		},
+		{
+			"name" : "Steph", 
+			"gender" : "female",
+			"left_ear" : "Jaune", 
+			"right_ear" : "Violet", 
+			"catch_date" : "26/04/2016",
+			"picture" : "none.jpg"
 		}
 	]
 }

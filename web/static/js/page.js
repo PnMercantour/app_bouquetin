@@ -9,8 +9,7 @@ $(document).ready(function(){
 		.done(function(data) {  // Loads configuration from JSON file
 			$conf = data;
 
-			$('#alert_success').alert('close');
-
+			initialize_alert();
 			initialize_datepicker();
 			initialize_select_tagged_count();
 			initialize_select_people();
@@ -26,6 +25,11 @@ $(document).ready(function(){
 			alert("ERROR : Failed to load configuration file ! ");
 		});
 })	
+
+function initialize_alert() {
+	$('#alert_success').hide();
+	$('#alert_error').hide();
+}
 
 
 function initialize_datepicker() {
@@ -157,8 +161,9 @@ function add_form_block_for_each_animal() {
 		    for (var $i = $number_displayed; $i < $number_to_display ; $i++) {
 
 		    	var block = $("<div class='animal-block row' id='individu_"+$i+"'/>");
-		    	var left_col = $("<div class='col-md-5'/>");
-		    	var right_col = $("<div class='col-md-7' id='"+$i+"_identity'/>");
+		    	var left_col = $("<div class='col-md-4'/>");
+		    	var center_col = $("<div class='col-md-4' id='"+$i+"_details'/>");
+		    	var right_col = $("<div class='col-md-4' id='"+$i+"_identity'/>");
 
 	    	// *** GENDER RADIO BUTTON *** //
 		    	var form_group_gender = $("<div class='form-group'/>");
@@ -224,7 +229,7 @@ function add_form_block_for_each_animal() {
 		    	var animal_name = $("<input type='hidden' id='"+$i+"_name' name='animals["+$i+"][name]' value='"+$UNKNOWN+"'/>");
 
 
-	    	// *** CONSTRUCT BLOCK *** //
+	    	// *** CONSTRUCT LEFT COLUMN *** //
 		    	left_col.append(form_group_gender);
 		    	left_col.append(form_group_ears);
 		    	left_col.append(form_group_childs);
@@ -233,6 +238,7 @@ function add_form_block_for_each_animal() {
 
 		    	block.append("<h4 class='col-md-12' id='"+$i+"_title'>"+$ANIMAL_DEFAULT_NAME+" "+($i+1)+"</h4>");
 		    	block.append(left_col);
+		    	block.append(center_col);
 		    	block.append(right_col);
 
 		    	blocks.push(block);
@@ -259,6 +265,7 @@ function set_block_data_and_behaviour($i) {
 	var comment = $("#"+$i+"_comment");
 	var animal_name = $("#"+$i+"_name"); // Hidden field
 	var identity = $("#"+$i+"_identity");
+	var details = $("#"+$i+"_details");
 
 	// Set listener on radio button gender to change the display of the ears selects and child selects
 	$("input[name='animals["+$i+"][gender]']").click(function() {
@@ -275,6 +282,7 @@ function set_block_data_and_behaviour($i) {
 
 		// Remove animal picture and reset its name
 		identity.empty();
+		details.empty();
 		name.text($ANIMAL_DEFAULT_NAME+" "+($i+1));
 
 		// Depending on the radio button gender value, set the correspondant colors in left_ear select
@@ -304,6 +312,7 @@ function set_block_data_and_behaviour($i) {
 
 			// Remove animal picture and reset its name
 			identity.empty();
+			details.empty();
 			name.text($ANIMAL_DEFAULT_NAME+" "+($i+1));
 
 			// Append default and $UNKNOWN value
@@ -343,6 +352,7 @@ function set_block_data_and_behaviour($i) {
 			right_ear_select.change(function() {
 				// Remove animal picture and reset its name
 				identity.empty();
+				details.empty();
 				name.text($ANIMAL_DEFAULT_NAME+" "+($i+1));
 
 				if (right_ear_select.val() != $UNKNOWN && left_ear_select.val() != $UNKNOWN) {
@@ -363,6 +373,7 @@ function set_block_data_and_behaviour($i) {
 						}
 						if ($selected_animal.picture != undefined) {
 							identity.append("<img src='" +$conf.animals_pictures_dir+$selected_animal.picture+ "' class='animal-img img-rounded'/>");
+							details.append("<p><b>Date de capture : </b>"+$selected_animal.catch_date+"</p>");
 						}
 					}
 				}
@@ -426,7 +437,8 @@ function get_default_option() {
 
 function submit_button() {
 	$("#submit_button").click(function() {
-		$(this).button('loading');
+		$(this).text('Validation123 ...');
+		$(this).prop('disabled', true);
 
 		// serializeObject does not support multiple select => need to set the value manually
 		var form_data = $("#form").serializeObject();
@@ -447,19 +459,22 @@ function submit_button() {
 			contentType: 'application/json; charset=UTF-8',
 
 			success: function(data, status) {
-				console.log("SUCCESS");
-				console.log(data);
-				console.log(status);
-				$('#alert_success').alert();
+				$("#submit_button").text('Validé !');
+				console.log("success");
+				$('#alert_error').hide();
+				$('#alert_success').show();
 			}, 
 			error: function(result, status, error) {
-				console.log("ERROR");
-				console.log(result);
-				console.log(status);
-				console.log(error);
+				console.log("error");
+				$('#error_details').text(error);
+				$('#alert_error').show();
+				$("#submit_button").prop('disabled', false);
+				$("#submit_button").text("Valider");
+			}, 
+			complete: function() {
+				window.scrollTo(0, 0);
 			}
 		});
-
-		$(this).button('reset');
+		
 	});
 }

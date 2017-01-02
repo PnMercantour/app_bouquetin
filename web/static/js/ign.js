@@ -45,6 +45,8 @@ window.onload= function() {
                             );
                             $('#coord_north').val(lonlat.lon);
                             $('#coord_east').val(lonlat.lat);
+                            $('#coord_north_hidden').val(lonlat.lon);
+                            $('#coord_east_hidden').val(lonlat.lat);
 
                             // Moves the marker
                             this.map.addLayer(markers);

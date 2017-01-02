@@ -2,14 +2,20 @@
 $UNKNOWN = 'unknown';
 $UNDEFINED = 'undefined';
 $NONE = 'none';
+$ANIMAL_DEFAULT_NAME = 'Individu marqué'
 
 $(document).ready(function(){
 	$.getJSON("/static/conf.json")
 		.done(function(data) { // Loads configuration from JSON file
 			$conf = data;
+
+			$('#alert_success').alert('close');
+
 			initialize_datepicker();
 			initialize_select_number();
 			initialize_ear_colors_dict();
+
+			initialize_input_sanitizer();
 
 			add_form_block_for_each_animal();
 
@@ -20,10 +26,22 @@ $(document).ready(function(){
 		});
 })	
 
+function initialize_datepicker() {
+	var date_input=$("#date"); 
+    var container=$(".bootstrap-iso form").length>0 ? $(".bootstrap-iso form").parent() : "body";
+    var options={
+      format: "dd/mm/yyyy",
+      container: container,
+      todayHighlight: true,
+      autoclose: true,
+    };
+    date_input.datepicker(options);
+}
+
 
 function initialize_select_number() {
 	Array.from(Array($conf.animal_max_number + 1).keys()).forEach(function (i) {
-	    $("#number").append($('<option>', { 
+	    $("#tagged_count").append($('<option>', { 
 	        value: i,
 	        text : i 
 	    }));
@@ -56,27 +74,25 @@ function initialize_ear_colors_dict() {
 }
 
 
-function initialize_datepicker() {
-	var date_input=$("#date"); 
-    var container=$(".bootstrap-iso form").length>0 ? $(".bootstrap-iso form").parent() : "body";
-    var options={
-      format: "dd/mm/yyyy",
-      container: container,
-      todayHighlight: true,
-      autoclose: true,
-    };
-    date_input.datepicker(options);
+function initialize_input_sanitizer() {
+	// Delete non numeric characters in counts inputs
+	["male_count", "female_count", "child_count"].forEach(function(input) {
+		$('#'+input).on('change keyup', function() {
+			var sanitized = $(this).val().replace(/[^0-9]/g, '');
+			$(this).val(sanitized);
+		});
+	});
 }
 
 
 function add_form_block_for_each_animal() {
 	var $number_displayed = 0;
 
-	$('#number').change(function() {
+	$('#tagged_count').change(function() {
 
 		var div_global = $("#animals_details");
 		var blocks = [];
-		var $number_to_display = Number($("#number option:selected").val());
+		var $number_to_display = Number($("#tagged_count option:selected").val());
 
 		// DELETE BLOCKS 
 		if ($number_to_display < $number_displayed) {
@@ -128,7 +144,7 @@ function add_form_block_for_each_animal() {
 		    	var form_group_childs = $("<div class='form-group' id='"+$i+"_childs'/>");
 		    	var childs_select = $("<select class='form-control' name='animals["+$i+"][childs]'/>");
 
-		    	// Append default and $UNKNOWN value
+		    	// Append default and unknown value
 		    	childs_select.append(get_default_option_value());
 		    	childs_select.append(get_unknown_option_value());
 
@@ -144,6 +160,15 @@ function add_form_block_for_each_animal() {
 
 		    	form_group_childs.hide();
 
+		    // *** COMMENT *** //
+		    	var form_comment = $("<div id='"+$i+"_comment' class='form-group'/>");
+
+		    	var comment = $("<input type='text' class='form-control' name='animals["+$i+"][comment]'/>");
+		    	form_comment.append("Commentaire : ");
+		    	form_comment.append(comment);
+
+		    	form_comment.hide();
+
 		    // *** NAME (HIDDEN) *** //
 		    	var animal_name = $("<input type='hidden' id='"+$i+"_name' name='animals["+$i+"][name]' value='"+$UNKNOWN+"'/>");
 
@@ -152,9 +177,10 @@ function add_form_block_for_each_animal() {
 		    	left_col.append(form_group_gender);
 		    	left_col.append(form_group_ears);
 		    	left_col.append(form_group_childs);
+		    	left_col.append(form_comment);
 		    	left_col.append(animal_name);
 
-		    	block.append("<h4 class='col-md-12' id='"+$i+"_title'>Individu "+($i+1)+"</h4>");
+		    	block.append("<h4 class='col-md-12' id='"+$i+"_title'>"+$ANIMAL_DEFAULT_NAME+" "+($i+1)+"</h4>");
 		    	block.append(left_col);
 		    	block.append(right_col);
 
@@ -179,6 +205,7 @@ function set_block_data_and_behaviour($i) {
 	var left_ear_select = $("select[name='animals["+$i+"][left_ear]']");
 	var right_ear_select = $("select[name='animals["+$i+"][right_ear]']");
 	var childs_select = $("#"+$i+"_childs");
+	var comment = $("#"+$i+"_comment");
 	var animal_name = $("#"+$i+"_name"); // Hidden field
 	var identity = $("#"+$i+"_identity");
 
@@ -186,15 +213,18 @@ function set_block_data_and_behaviour($i) {
 	$("input[name='animals["+$i+"][gender]']").click(function() {
 		var radio_gender_checked = $("input[name='animals["+$i+"][gender]']:checked");
 
-		// Display ears selects, empty the ear selects
+		// Empty and display ears selects
 		$("#"+$i+"_ears").show();
 		left_ear_select.empty();
 		right_ear_select.empty();
+
+		// Display comment 
+		comment.show()
 		
 
 		// Remove animal picture and reset its name
 		identity.empty();
-		name.text("Individu "+($i+1));
+		name.text($ANIMAL_DEFAULT_NAME+" "+($i+1));
 
 		// Depending on the radio button gender value, set the correspondant colors in left_ear select
 		if (radio_gender_checked.val() == "male") {
@@ -223,7 +253,7 @@ function set_block_data_and_behaviour($i) {
 
 			// Remove animal picture and reset its name
 			identity.empty();
-			name.text("Individu "+($i+1));
+			name.text($ANIMAL_DEFAULT_NAME+" "+($i+1));
 
 			// Append default and $UNKNOWN value
 			right_ear_select.append(get_none_option_value());
@@ -262,7 +292,7 @@ function set_block_data_and_behaviour($i) {
 			right_ear_select.change(function() {
 				// Remove animal picture and reset its name
 				identity.empty();
-				name.text("Individu "+($i+1));
+				name.text($ANIMAL_DEFAULT_NAME+" "+($i+1));
 
 				if (right_ear_select.val() != $UNKNOWN && left_ear_select.val() != $UNKNOWN) {
 					var $selected_animal;
@@ -339,6 +369,8 @@ function submit_button() {
 	$("#submit_button").click(function() {
 		$(this).button('loading');
 
+		console.log(JSON.stringify($("#form").serializeObject()));
+
 		// Send data to backend
 		$.ajax({
 			url: $conf.backend_url+"/obs", 
@@ -351,7 +383,7 @@ function submit_button() {
 				console.log("SUCCESS");
 				console.log(data);
 				console.log(status);
-				window.location.replace("http://stackoverflow.com");
+				$('#alert_success').alert();
 			}, 
 			error: function(result, status, error) {
 				console.log("ERROR");

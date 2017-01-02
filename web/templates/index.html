@@ -49,6 +49,9 @@
 
 
     <body>
+    <div class="alert alert-success alert-dismissable" id="alert_success">
+    	Bandeau d’alerte - la classe success
+    </div> 
         <div class="bootstrap-iso">
             <div class="container-fluid">
                 <div class="row">
@@ -82,23 +85,42 @@
                             
                             <div class="form-group">
                             	<label for="coord_north">Position des individus</label>
-                                <span id="helpBlock" class="help-block"><i>Projection Lambert 93</i></span>
+                                <span id="helpBlock" class="help-block"><i>Cliquer sur la carte</i></span>
                                 <div class="input-group">
-                                	<input type="text" class="form-control" id="coord_north" name="coord[north]" placeholder="0" title="Vous pouvez aussi cliquer sur la carte"> 
+                                	<input type="text" class="form-control" id="coord_north" placeholder="0" title="Mis à jour lors du clic sur la carte" disabled>
                                 	<span class="input-group-addon" id="coord_north_addon">N</span>
+                                	<!-- Hidden field used to serialize form data with jquery.serialize-object (a disabled input is not serialized) -->
+                                	<input type="hidden" class="form-control" id="coord_north_hidden" name="coord[north]">
                                 </div>
                                 <br>
                                 <div class="input-group">
-                                	<input type="text" class="form-control" id="coord_east" name="coord[east]" placeholder="0" title="Vous pouvez aussi cliquer sur la carte">
+                                	<input type="text" class="form-control" id="coord_east" placeholder="0" title="Mis à jour lors du clic sur la carte" disabled>
                                 	<span class="input-group-addon" id="coord_east_addon">E</span>
+                                	<!-- Hidden field used to serialize form data with jquery.serialize-object (a disabled input is not serialized) -->
+                                	<input type="hidden" class="form-control" id="coord_east_hidden" name="coord[east]">
                                 </div>
                             </div>
                                 
                             <div class="form-group">
-                                <label for="number">Nombre d'individus</label>
-                                <select class="form-control" name="number" id="number">
+                                <label for="tagged_count">Nombre d'individus marqués</label>
+                                <select class="form-control" id="tagged_count">
                                     <!-- Options added by page.js -->
                                 </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="male_count">Nombre total de mâles</label>
+                                <input type="number" class="form-control" name="male_count" id="male_count" min="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="female_count">Nombre total de femelles</label>
+                                <input type="number" class="form-control" name="female_count" id="female_count" min="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="child_count">Nombre total de cabris</label>
+                                <input type="number" class="form-control" name="child_count" id="child_count" min="0">
                             </div>
 	                    </div>
 
@@ -109,6 +131,13 @@
 
 					<div class="row" id="animals_details_row">
                         <div class="col-md-12" id="animals_details"></div>
+                    </div>
+
+                    <div class="row">
+                    	<div class="col-md-12">
+	                    	<label for="comment">Commentaire global</label>
+	                    	<textarea class="form-control" rows="5" id="comment" name="comment" placeholder="Ajouter un commentaire global sur l'observation"></textarea>
+                    	</div>
                     </div>
                 </form>
 

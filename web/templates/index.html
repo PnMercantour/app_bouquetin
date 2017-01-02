@@ -5,53 +5,31 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
         <!-- STYLESHEETS -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
-        <link rel="stylesheet" href="/static/css/bootstrap.css">
-   		<link rel="stylesheet" href="/static/css/style.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" href="static/css/bootstrap-datepicker3.css"/>
+        <link rel="stylesheet" href="static/css/bootstrap-multiselect.css"/>
+
+   		<link rel="stylesheet" href="static/css/style.css">
 
    		<!-- SCRIPTS -->
-   		<script 
-		    type="text/javascript" 
-		    src="http://code.jquery.com/jquery-3.1.1.min.js">
-		</script>
+   		<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<script type="text/javascript" src="http://api.ign.fr/geoportail/api/js/latest/Geoportal.js"></script>
+		<script type="text/javascript" src="static/js/jquery.serialize-object.js"></script>
+		<script type="text/javascript" src="static/js/bootstrap-multiselect.js"></script>
+		<script type="text/javascript" src="static/js/bootstrap-datepicker.min.js"></script> 
 
-		<script 
-		    type="text/javascript" 
-		    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js">
-		</script> 
+		<script type="text/javascript" src="static/js/page.js"></script>
+		<script type="text/javascript" src="static/js/ign.js"></script>
 		
-		<script 
-		    type="text/javascript" 
-		    src="static/js/jquery.serialize-object.js">
-		</script>
-
-		<script 
-		    type="text/javascript" 
-		    src="static/js/page.js">
-		</script>
-
-		<script async
-		    type="text/javascript" 
-		    src="static/js/ign.js">
-		</script>
-
-		<script
-		    type="text/javascript" 
-		    src="static/js/bootstrap.js">
-		</script>
-
-		<script async
-		    type="text/javascript"
-		    src="http://api.ign.fr/geoportail/api/js/latest/Geoportal.js"
-		    charset="utf-8">
-		</script>
     </head>
 
 
     <body>
-    <div class="alert alert-success alert-dismissable" id="alert_success">
-    	Bandeau d’alerte - la classe success
-    </div> 
+	    <div class="alert alert-success alert-dismissable" id="alert_success">
+	    	Bandeau d’alerte - la classe success
+	    </div> 
+
         <div class="bootstrap-iso">
             <div class="container-fluid">
                 <div class="row">
@@ -67,17 +45,17 @@
 				<form id="form">
 					<div class="row">
 						<div class="col-md-12">
-							<h3>L'observateur</h3>
 	                        <div class="form-group">
-	                            <label for="name_surname">Nom et prénom</label>
-	                            <input type="text" class="form-control" name="observer_name" id="name_surname" placeholder="Jean Dupont">
+	                            <label for="name_surname">Noms et prénoms des observateurs</label><br>
+	                            <select class="form-control" name="observer_names" id="observer_names" multiple="multiple">
+	                            	<!-- Options added by page.js -->
+	                            </select>
 	                        </div>
 	                    </div>
 	            	</div>
 
 	                <div class="row">
 	                    <div class="col-md-2">
-	                    <h3>L'observation</h3>
                             <div class="form-group">
                                 <label for="date">Date</label>
                                 <input type="datetime" class="form-control" id="date" name="date" placeholder="01/01/2000">
@@ -85,7 +63,7 @@
                             
                             <div class="form-group">
                             	<label for="coord_north">Position des individus</label>
-                                <span id="helpBlock" class="help-block"><i>Cliquer sur la carte</i></span>
+                                <span class="help-block">Cliquer sur la carte</span>
                                 <div class="input-group">
                                 	<input type="text" class="form-control" id="coord_north" placeholder="0" title="Mis à jour lors du clic sur la carte" disabled>
                                 	<span class="input-group-addon" id="coord_north_addon">N</span>

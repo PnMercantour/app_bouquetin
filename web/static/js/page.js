@@ -6,13 +6,14 @@ $ANIMAL_DEFAULT_NAME = 'Individu marqué'
 
 $(document).ready(function(){
 	$.getJSON("/static/conf.json")
-		.done(function(data) { // Loads configuration from JSON file
+		.done(function(data) {  // Loads configuration from JSON file
 			$conf = data;
 
 			$('#alert_success').alert('close');
 
 			initialize_datepicker();
-			initialize_select_number();
+			initialize_select_tagged_count();
+			initialize_select_people();
 			initialize_ear_colors_dict();
 
 			initialize_input_sanitizer();
@@ -25,6 +26,7 @@ $(document).ready(function(){
 			alert("ERROR : Failed to load configuration file ! ");
 		});
 })	
+
 
 function initialize_datepicker() {
 	var date_input=$("#date"); 
@@ -39,13 +41,62 @@ function initialize_datepicker() {
 }
 
 
-function initialize_select_number() {
-	Array.from(Array($conf.animal_max_number + 1).keys()).forEach(function (i) {
+function initialize_select_tagged_count() {
+	Array.from(Array($conf.animal_max_tagged_count + 1).keys()).forEach(function (i) {
 	    $("#tagged_count").append($('<option>', { 
 	        value: i,
 	        text : i 
 	    }));
 	});
+}
+
+
+function initialize_select_people() {
+	var observer_names_select = $("#observer_names");
+	
+	$.each($conf.people, function ($i, $val) {
+		var group = $('<optgroup>', {
+			label: $i, 
+			class:"group-"+$i
+		});
+		
+		$val.forEach(function($j) {
+		    group.append($('<option>', { 
+		        value: $j,
+		        text : $j 
+		    }));
+		});
+
+		observer_names_select.append(group);
+	});
+
+	$("#observer_names").multiselect({
+				enableCaseInsensitiveFiltering: true,
+				maxHeight: 200,
+				includeSelectAllOption: false, 
+				enableCollapsibleOptGroups: true, 
+				selectAllText: 'Tous !', 
+	            buttonText: function(options, select) {
+	                if (options.length === 0) {
+	                    return 'Aucun';
+	                }
+	                else if (options.length > 5) {
+	                    return options.length + ' selectionnés';
+	                }
+	                 else {
+	                     var labels = [];
+	                     options.each(function() {
+	                         if ($(this).attr('label') !== undefined) {
+	                             labels.push($(this).attr('label'));
+	                         }
+	                         else {
+	                             labels.push($(this).html());
+	                         }
+	                     });
+	                     return labels.join(', ') + '';
+	                 }
+            	}
+			});  // from bootstrap-multiselect.js
 }
 
 
@@ -145,8 +196,8 @@ function add_form_block_for_each_animal() {
 		    	var childs_select = $("<select class='form-control' name='animals["+$i+"][childs]'/>");
 
 		    	// Append default and unknown value
-		    	childs_select.append(get_default_option_value());
-		    	childs_select.append(get_unknown_option_value());
+		    	childs_select.append(get_default_option());
+		    	childs_select.append(get_not_counted_option());
 
 		    	// Append all possible options
 		    	$conf.childs_possible_values.forEach(function (i) {
@@ -257,7 +308,7 @@ function set_block_data_and_behaviour($i) {
 
 			// Append default and $UNKNOWN value
 			right_ear_select.append(get_none_option_value());
-			right_ear_select.append(get_unknown_option_value());
+			right_ear_select.append(get_unknown_ear_option());
 
 			// If the left ear color is $UNKNOWN, add every color to the right ear select
 			var $right_ear_possible_colors = [];
@@ -326,7 +377,7 @@ function set_left_ears_select_options($id, $gender) {
 
 	// Append default and unknwon value
 	left_ear_select.append(get_none_option_value());
-	left_ear_select.append(get_unknown_option_value());
+	left_ear_select.append(get_unknown_ear_option());
 
 	// Append every color possible
 	$ears_colors_dict[$gender]["left_ears"].forEach(function($left_ear_color) {	
@@ -335,16 +386,6 @@ function set_left_ears_select_options($id, $gender) {
 	        text : $left_ear_color
 	    }));
 	});
-}
-
-
-function get_default_option_value() {
-	return $('<option>', { 
-        value: $UNDEFINED,
-        text : "Sélectionner ...", 
-        disabled : "true",
-        selected: "selected"
-    });
 }
 
 
@@ -357,10 +398,28 @@ function get_none_option_value() {
 }
 
 
-function get_unknown_option_value() {
+function get_not_counted_option() {
+	return $('<option>', { 
+        value: $UNKNOWN,
+        text : "Non compté"
+    });
+}
+
+
+function get_unknown_ear_option() {
 	return $('<option>', { 
         value: $UNKNOWN,
         text : "Non identifiable"
+    });
+}
+
+
+function get_default_option() {
+	return $('<option>', { 
+        value: $UNDEFINED,
+        text : "Sélectionner ...", 
+        disabled : "true",
+        selected: "selected"
     });
 }
 
@@ -369,13 +428,21 @@ function submit_button() {
 	$("#submit_button").click(function() {
 		$(this).button('loading');
 
-		console.log(JSON.stringify($("#form").serializeObject()));
+		// serializeObject does not support multiple select => need to set the value manually
+		var form_data = $("#form").serializeObject();
+		form_data.observer_names = $("#observer_names").val();
+
+
+
+		console.log(JSON.stringify(form_data));
+
+
 
 		// Send data to backend
 		$.ajax({
 			url: $conf.backend_url+"/obs", 
 			type: 'put', 
-			data: JSON.stringify($("#form").serializeObject()), 
+			data: JSON.stringify(form_data), 
 			dataType: 'json', 
 			contentType: 'application/json; charset=UTF-8',
 

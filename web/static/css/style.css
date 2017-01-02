@@ -32,6 +32,19 @@
 	max-height:250px;
 }
 
+.help-block {
+	font-style: italic;
+	margin-top: 0px;
+}
+
+.row {
+	margin-top: 20px;
+}
+
+.form-group {
+	margin-bottom:20px;
+}
+
 div#map-canvas {
 	height: 600px;
 	text-align: center;

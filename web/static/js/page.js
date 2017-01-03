@@ -3,23 +3,28 @@ $UNKNOWN = 'unknown';
 $UNDEFINED = 'undefined';
 $NONE = 'none';
 $ANIMAL_DEFAULT_NAME = 'Individu marqué'
+$CONF = undefined;
+$DATA = undefined;
 
-$(document).ready(function(){
+$(document).ready(function() {
 	$.getJSON("/static/conf.json")
-		.done(function(data) {  // Loads configuration from JSON file
-			$conf = data;
+		.done(function(conf_data) {  // Loads configuration from JSON file
+			$CONF = conf_data;
 
-			initialize_alert();
-			initialize_datepicker();
-			initialize_select_tagged_count();
-			initialize_select_people();
-			initialize_ear_colors_dict();
+			load_data(function(callback) {
+				if (callback) {
+					initialize_datepicker();
+					initialize_select_tagged_count();
+					initialize_select_people();
 
-			initialize_input_sanitizer();
+					initialize_input_sanitizer();
 
-			add_form_block_for_each_animal();
+					add_form_block_for_each_animal();
 
-			submit_button();
+					submit_button();
+				}
+			});
+
 		})
 		.fail(function() {
 			alert("ERROR : Failed to load configuration file ! ");
@@ -27,9 +32,19 @@ $(document).ready(function(){
 })	
 
 
-function initialize_alert() {
-	$('#alert_success').hide();
-	$('#alert_error').hide();
+function load_data(callback) {
+	$.ajax({
+		url: $CONF.backend_url+"/data", 
+		type: 'get', 
+		success: function(data, status) {
+			$DATA = data;
+			callback(true);
+		}, 
+		error: function(result, status, error) {
+			alert("ERROR : Failed to load configuration file ! ");
+			callback(false);
+		}
+	});
 }
 
 
@@ -47,7 +62,7 @@ function initialize_datepicker() {
 
 
 function initialize_select_tagged_count() {
-	Array.from(Array($conf.animal_max_tagged_count + 1).keys()).forEach(function (i) {
+	Array.from(Array($CONF.animal_max_tagged_count + 1).keys()).forEach(function (i) {
 		$("#tagged_count").append($('<option>', { 
 			value: i,
 			text : i 
@@ -58,26 +73,25 @@ function initialize_select_tagged_count() {
 
 function initialize_select_people() {
 	// Documentation : http://davidstutz.github.io/bootstrap-multiselect
-	var observer_names_select = $("#observer_names");
+	var observer_ids_select = $("#observer_ids");
 	
-	$.each($conf.people, function ($i, $val) {
-		var group = $('<optgroup>', {
-			label: $i, 
-			class:"group-"+$i
-		});
+	$DATA.departments.forEach(function ($i) {
+		observer_ids_select.append($('<optgroup>', {
+			label: $i.name, 
+			class: "group-"+$i.id, 
+			id: "department-"+$i.id
+		}));
+	});
 		
-		$val.forEach(function($j) {
-			group.append($('<option>', { 
-				value: $j,
-				text : $j 
-			}));
-		});
-
-		observer_names_select.append(group);
+	$DATA.peoples.forEach(function($j) {
+		$('#department-'+$j.department_id).append($('<option>', { 
+			value: $j.id,
+			text : $j.name + " " + $j.surname
+		}));
 	});
 
 	// from bootstrap-multiselect.js
-	$("#observer_names").multiselect({
+	$("#observer_ids").multiselect({
 		enableCaseInsensitiveFiltering: true,
 		maxHeight: 200,
 		includeSelectAllOption: false, 
@@ -105,31 +119,6 @@ function initialize_select_people() {
 			 }
 		}
 	});  
-}
-
-
-function initialize_ear_colors_dict() {
-	$ears_colors_dict = {
-		"male":{
-			"left_ears" : [], 
-			"ears" : []
-		}, 
-		"female":{
-			"left_ears" : [], 
-			"ears" : []
-		}
-	}; 
-
-	$conf.animals.forEach(function($animal) {
-		if ($.inArray($animal.left_ear, $ears_colors_dict[$animal.gender]["left_ears"]) == -1) {
-			$ears_colors_dict[$animal.gender]["left_ears"].push($animal.left_ear);
-		}
-
-		$ears_colors_dict[$animal.gender]["ears"].push({ 
-			"left": $animal.left_ear, 
-			"right": $animal.right_ear
-		});	
-	});
 }
 
 
@@ -187,16 +176,12 @@ function add_form_block_for_each_animal() {
 				form_group_gender.append(label_male);
 				form_group_gender.append(label_female);
 
-			// *** EARS SELECTS *** //
+			// *** EARS SELECT *** //
 				var form_group_ears = $("<div id='"+$i+"_ears' class='form-group'/>");
 
-				var left_ear_select = $("<select class='form-control' name='animals["+$i+"][left_ear]'/>");
-				form_group_ears.append("Boucle gauche : ");
-				form_group_ears.append(left_ear_select);
-
-				var right_ear_select = $("<select class='form-control' name='animals["+$i+"][right_ear]'/>");
-				form_group_ears.append("Boucle droite : ");
-				form_group_ears.append(right_ear_select);
+				var ears_select = $("<select class='form-control' name='animals["+$i+"][ears]'/>");
+				form_group_ears.append("Boucles : ");
+				form_group_ears.append(ears_select);
 
 				form_group_ears.hide();
 
@@ -209,7 +194,7 @@ function add_form_block_for_each_animal() {
 				childs_select.append(get_not_counted_option());
 
 				// Append all possible options
-				$conf.childs_possible_values.forEach(function (i) {
+				$CONF.childs_possible_values.forEach(function (i) {
 					childs_select.append($('<option>', { 
 						value: i,
 						text : i 
@@ -229,16 +214,12 @@ function add_form_block_for_each_animal() {
 
 				form_comment.hide();
 
-			// *** NAME (HIDDEN) *** //
-				var animal_name = $("<input type='hidden' id='"+$i+"_name' name='animals["+$i+"][name]' value='"+$UNKNOWN+"'/>");
-
 
 			// *** CONSTRUCT LEFT COLUMN *** //
 				left_col.append(form_group_gender);
 				left_col.append(form_group_ears);
 				left_col.append(form_group_childs);
 				left_col.append(form_comment);
-				left_col.append(animal_name);
 
 				block.append("<h4 class='col-md-12' id='"+$i+"_title'>"+$ANIMAL_DEFAULT_NAME+" "+($i+1)+"</h4>");
 				block.append(left_col);
@@ -261,154 +242,65 @@ function add_form_block_for_each_animal() {
 }
 
 
-function set_block_data_and_behaviour($i) {
-	var name = $("#"+$i+"_title");
-	var left_ear_select = $("select[name='animals["+$i+"][left_ear]']");
-	var right_ear_select = $("select[name='animals["+$i+"][right_ear]']");
-	var childs_select = $("#"+$i+"_childs");
-	var comment = $("#"+$i+"_comment");
-	var animal_name = $("#"+$i+"_name"); // Hidden field
-	var identity = $("#"+$i+"_identity");
-	var details = $("#"+$i+"_details");
+function set_block_data_and_behaviour($id) {
+	var name = $("#"+$id+"_title");
+	var ears_select = $("select[name='animals["+$id+"][ears]']");
+	var childs_select = $("#"+$id+"_childs");
+	var comment = $("#"+$id+"_comment");
+	var identity = $("#"+$id+"_identity");
+	var details = $("#"+$id+"_details");
 
 	// Set listener on radio button gender to change the display of the ears selects and child selects
-	$("input[name='animals["+$i+"][gender]']").click(function() {
-		var radio_gender_checked = $("input[name='animals["+$i+"][gender]']:checked");
+	$("input[name='animals["+$id+"][gender]']").click(function() {
+		var radio_gender_checked = $("input[name='animals["+$id+"][gender]']:checked");
 
-		// Empty and display ears selects
-		$("#"+$i+"_ears").show();
-		left_ear_select.empty();
-		right_ear_select.empty();
-
-		// Display comment 
+		// Reset the animal form
+		name.text($ANIMAL_DEFAULT_NAME+" "+($id+1));
+		$("#"+$id+"_ears").show();
 		comment.show()
-		
-
-		// Remove animal picture and reset its name
+		ears_select.empty();
 		identity.empty();
 		details.empty();
-		name.text($ANIMAL_DEFAULT_NAME+" "+($i+1));
 
-		// Depending on the radio button gender value, set the correspondant colors in left_ear select
+		// Set the colors in ears select
+		ears_select.append(get_default_option());
+		$DATA.animals.forEach(function($animal) {	
+			if ($animal.gender == radio_gender_checked.val()) {
+				ears_select.append($('<option>', { 
+					value: $animal.ears,
+					text : $animal.ears
+				}));
+			}
+		});
+
+		// Display or hide the child select
 		if (radio_gender_checked.val() == "male") {
-			// Reset the childs select to default option
 			childs_select.filter(function() { 
 				return $(this).text() == $UNDEFINED;
-			}).prop('selected', true);
-
+			}).prop('disabled', 'disabled');
 			childs_select.hide();
-			set_left_ears_select_options($i, "male");
 		}
 
 		else if (radio_gender_checked.val() == "female") {
 			childs_select.show();
-			set_left_ears_select_options($i, "female");
 		}
 
-		// Add only the none option to the right ear select, so the options none none are displayed by default
-		right_ear_select.append(get_none_option_value());
-
-
-		// Set listener on left_ear select to change right_ear select options
-		left_ear_select.change(function() {
-			// Empty the right ear select possible options
-			right_ear_select.empty();
-
-			// Remove animal picture and reset its name
+		// Set listener on ears_select
+		ears_select.change(function() {
 			identity.empty();
 			details.empty();
-			name.text($ANIMAL_DEFAULT_NAME+" "+($i+1));
-
-			// Append default and $UNKNOWN value
-			right_ear_select.append(get_none_option_value());
-			right_ear_select.append(get_unknown_ear_option());
-
-			// If the left ear color is $UNKNOWN, add every color to the right ear select
-			var $right_ear_possible_colors = [];
-			if (left_ear_select.val() == $UNKNOWN) {
-				$ears_colors_dict[radio_gender_checked.val()]["ears"].forEach(function($ears_color) {
-					if ($.inArray($ears_color.right, $right_ear_possible_colors) == -1) {
-							$right_ear_possible_colors.push($ears_color.right);
-						}
-					});
-			}
-			// Else, get every right ear color that matches the left ear color already selected
-			else { 
-				$ears_colors_dict[radio_gender_checked.val()]["ears"].forEach(function($ears_color) {
-					if ($ears_color.left == left_ear_select.val()) {
-						if ($.inArray($ears_color.right, $right_ear_possible_colors) == -1) {
-							$right_ear_possible_colors.push($ears_color.right);
-						}
+			$DATA.animals.forEach(function($animal) {
+				if (radio_gender_checked.val() == $animal.gender && ears_select.val() == $animal.ears) {
+					if ($animal.name != undefined) {
+						name.text($animal.name);
 					}
-				});
-			}
-
-			// Append the possible options to the right_ear select
-			$right_ear_possible_colors.forEach(function($possible_color){
-				right_ear_select.append($('<option>', { 
-					value: $possible_color,
-					text : $possible_color
-				}));
-			});
-
-
-			// Set listener on right_ear select to add the name and picture of a matched animal
-			right_ear_select.change(function() {
-				// Remove animal picture and reset its name
-				identity.empty();
-				details.empty();
-				name.text($ANIMAL_DEFAULT_NAME+" "+($i+1));
-
-				if (right_ear_select.val() != $UNKNOWN && left_ear_select.val() != $UNKNOWN) {
-					var $selected_animal;
-
-					$conf.animals.forEach(function($animal) {
-						if (left_ear_select.val() == $animal.left_ear && 
-							right_ear_select.val() == $animal.right_ear && 
-							radio_gender_checked.val() == $animal.gender) {
-							$selected_animal = $animal;
-						}
-					});
-
-					if ($selected_animal != undefined) {
-						if ($selected_animal.name != undefined) {
-							name.text($selected_animal.name);
-							animal_name.val($selected_animal.name);
-						}
-						if ($selected_animal.picture != undefined) {
-							identity.append("<img src='" +$conf.animals_pictures_dir+$selected_animal.picture+ "' class='animal-img img-rounded'/>");
-							details.append("<p><b>Date de capture : </b>"+$selected_animal.catch_date+"</p>");
-						}
+					if ($animal.picture != undefined) {
+						identity.append("<img src='" +$CONF.animals_pictures_dir+$animal.picture+ "' class='animal-img img-rounded center-block'/>");
+						details.append("<p><b>Date de capture : </b>"+$animal.catch_date+"</p>");
 					}
 				}
 			});
 		});
-	});
-}
-
-
-function set_left_ears_select_options($id, $gender) {
-	var left_ear_select = $("select[name='animals["+$id+"][left_ear]']");
-
-	// Append default and unknwon value
-	left_ear_select.append(get_none_option_value());
-	left_ear_select.append(get_unknown_ear_option());
-
-	// Append every color possible
-	$ears_colors_dict[$gender]["left_ears"].forEach(function($left_ear_color) {	
-		left_ear_select.append($('<option>', { 
-			value: $left_ear_color,
-			text : $left_ear_color
-		}));
-	});
-}
-
-
-function get_none_option_value() {
-	return $('<option>', { 
-		value: $NONE,
-		text : "Non marqué", 
-		selected: "selected"
 	});
 }
 
@@ -446,7 +338,7 @@ function submit_button() {
 
 		// serializeObject does not support multiple select => need to set the value manually
 		var form_data = $("#form").serializeObject();
-		form_data.observer_names = $("#observer_names").val();
+		form_data.observer_ids = $("#observer_ids").val();
 
 
 
@@ -456,7 +348,7 @@ function submit_button() {
 
 		// Send data to backend
 		$.ajax({
-			url: $conf.backend_url+"/obs", 
+			url: $CONF.backend_url+"/obs", 
 			type: 'put', 
 			data: JSON.stringify(form_data), 
 			dataType: 'json', 

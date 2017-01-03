@@ -26,6 +26,7 @@ $(document).ready(function(){
 		});
 })	
 
+
 function initialize_alert() {
 	$('#alert_success').hide();
 	$('#alert_error').hide();
@@ -34,28 +35,29 @@ function initialize_alert() {
 
 function initialize_datepicker() {
 	var date_input=$("#date"); 
-    var container=$(".bootstrap-iso form").length>0 ? $(".bootstrap-iso form").parent() : "body";
-    var options={
-      format: "dd/mm/yyyy",
-      container: container,
-      todayHighlight: true,
-      autoclose: true,
-    };
-    date_input.datepicker(options);
+	var container=$(".bootstrap-iso form").length>0 ? $(".bootstrap-iso form").parent() : "body";
+	var options={
+	  format: "dd/mm/yyyy",
+	  container: container,
+	  todayHighlight: true,
+	  autoclose: true,
+	};
+	date_input.datepicker(options);
 }
 
 
 function initialize_select_tagged_count() {
 	Array.from(Array($conf.animal_max_tagged_count + 1).keys()).forEach(function (i) {
-	    $("#tagged_count").append($('<option>', { 
-	        value: i,
-	        text : i 
-	    }));
+		$("#tagged_count").append($('<option>', { 
+			value: i,
+			text : i 
+		}));
 	});
 }
 
 
 function initialize_select_people() {
+	// Documentation : http://davidstutz.github.io/bootstrap-multiselect
 	var observer_names_select = $("#observer_names");
 	
 	$.each($conf.people, function ($i, $val) {
@@ -65,42 +67,44 @@ function initialize_select_people() {
 		});
 		
 		$val.forEach(function($j) {
-		    group.append($('<option>', { 
-		        value: $j,
-		        text : $j 
-		    }));
+			group.append($('<option>', { 
+				value: $j,
+				text : $j 
+			}));
 		});
 
 		observer_names_select.append(group);
 	});
 
+	// from bootstrap-multiselect.js
 	$("#observer_names").multiselect({
-				enableCaseInsensitiveFiltering: true,
-				maxHeight: 200,
-				includeSelectAllOption: false, 
-				enableCollapsibleOptGroups: true, 
-				selectAllText: 'Tous !', 
-	            buttonText: function(options, select) {
-	                if (options.length === 0) {
-	                    return 'Aucun';
-	                }
-	                else if (options.length > 5) {
-	                    return options.length + ' selectionnés';
-	                }
-	                 else {
-	                     var labels = [];
-	                     options.each(function() {
-	                         if ($(this).attr('label') !== undefined) {
-	                             labels.push($(this).attr('label'));
-	                         }
-	                         else {
-	                             labels.push($(this).html());
-	                         }
-	                     });
-	                     return labels.join(', ') + '';
-	                 }
-            	}
-			});  // from bootstrap-multiselect.js
+		enableCaseInsensitiveFiltering: true,
+		maxHeight: 200,
+		includeSelectAllOption: false, 
+		enableCollapsibleOptGroups: true, 
+		selectAllText: 'Tous !', 
+		buttonWidth: '200px', 
+		buttonText: function(options, select) {
+			if (options.length === 0) {
+				return 'Aucun';
+			}
+			else if (options.length > 5) {
+				return options.length + ' selectionnés';
+			}
+			 else {
+				 var labels = [];
+				 options.each(function() {
+					 if ($(this).attr('label') !== undefined) {
+						 labels.push($(this).attr('label'));
+					 }
+					 else {
+						 labels.push($(this).html());
+					 }
+				 });
+				 return labels.join(', ') + '';
+			 }
+		}
+	});  
 }
 
 
@@ -158,98 +162,98 @@ function add_form_block_for_each_animal() {
 
 		// ADD BLOCKS
 		else if ($number_to_display > $number_displayed) {
-		    for (var $i = $number_displayed; $i < $number_to_display ; $i++) {
+			for (var $i = $number_displayed; $i < $number_to_display ; $i++) {
 
-		    	var block = $("<div class='animal-block row' id='individu_"+$i+"'/>");
-		    	var left_col = $("<div class='col-md-4'/>");
-		    	var center_col = $("<div class='col-md-4' id='"+$i+"_details'/>");
-		    	var right_col = $("<div class='col-md-4' id='"+$i+"_identity'/>");
+				var block = $("<div class='animal-block row' id='individu_"+$i+"'/>");
+				var left_col = $("<div class='col-md-4'/>");
+				var center_col = $("<div class='col-md-4' id='"+$i+"_details'/>");
+				var right_col = $("<div class='col-md-4' id='"+$i+"_identity'/>");
 
-	    	// *** GENDER RADIO BUTTON *** //
-		    	var form_group_gender = $("<div class='form-group'/>");
+			// *** GENDER RADIO BUTTON *** //
+				var form_group_gender = $("<div class='form-group'/>");
 
-		    	var label_male = $("<label class='radio-inline'/>");
+				var label_male = $("<label class='radio-inline'/>");
 
-		    	var label_female = $("<label class='radio-inline'/>");
+				var label_female = $("<label class='radio-inline'/>");
 
-		    	var input_radio_male = $("<input type='radio' value='male' name='animals["+$i+"][gender]'/>");
-		    	label_male.append(input_radio_male);
-		    	label_male.append('Mâle');
+				var input_radio_male = $("<input type='radio' value='male' name='animals["+$i+"][gender]'/>");
+				label_male.append(input_radio_male);
+				label_male.append('Mâle');
 				
 				var input_radio_female = $("<input type='radio' value='female' name='animals["+$i+"][gender]'/>");
-		    	label_female.append(input_radio_female);
-		    	label_female.append('Femelle');
+				label_female.append(input_radio_female);
+				label_female.append('Femelle');
 				
-		    	form_group_gender.append(label_male);
-		    	form_group_gender.append(label_female);
+				form_group_gender.append(label_male);
+				form_group_gender.append(label_female);
 
-	    	// *** EARS SELECTS *** //
-		    	var form_group_ears = $("<div id='"+$i+"_ears' class='form-group'/>");
+			// *** EARS SELECTS *** //
+				var form_group_ears = $("<div id='"+$i+"_ears' class='form-group'/>");
 
-		    	var left_ear_select = $("<select class='form-control' name='animals["+$i+"][left_ear]'/>");
-		    	form_group_ears.append("Boucle gauche : ");
-		    	form_group_ears.append(left_ear_select);
+				var left_ear_select = $("<select class='form-control' name='animals["+$i+"][left_ear]'/>");
+				form_group_ears.append("Boucle gauche : ");
+				form_group_ears.append(left_ear_select);
 
-		    	var right_ear_select = $("<select class='form-control' name='animals["+$i+"][right_ear]'/>");
-		    	form_group_ears.append("Boucle droite : ");
-		    	form_group_ears.append(right_ear_select);
+				var right_ear_select = $("<select class='form-control' name='animals["+$i+"][right_ear]'/>");
+				form_group_ears.append("Boucle droite : ");
+				form_group_ears.append(right_ear_select);
 
-		    	form_group_ears.hide();
+				form_group_ears.hide();
 
-	    	// *** CHILD NUMBER *** //
-		    	var form_group_childs = $("<div class='form-group' id='"+$i+"_childs'/>");
-		    	var childs_select = $("<select class='form-control' name='animals["+$i+"][childs]'/>");
+			// *** CHILD NUMBER *** //
+				var form_group_childs = $("<div class='form-group' id='"+$i+"_childs'/>");
+				var childs_select = $("<select class='form-control' name='animals["+$i+"][childs]'/>");
 
-		    	// Append default and unknown value
-		    	childs_select.append(get_default_option());
-		    	childs_select.append(get_not_counted_option());
+				// Append default and unknown value
+				childs_select.append(get_default_option());
+				childs_select.append(get_not_counted_option());
 
-		    	// Append all possible options
-		    	$conf.childs_possible_values.forEach(function (i) {
-				    childs_select.append($('<option>', { 
-				        value: i,
-				        text : i 
-				    }));
+				// Append all possible options
+				$conf.childs_possible_values.forEach(function (i) {
+					childs_select.append($('<option>', { 
+						value: i,
+						text : i 
+					}));
 				});
-		    	form_group_childs.append("Cabris : ");
-		    	form_group_childs.append(childs_select);
+				form_group_childs.append("Cabris : ");
+				form_group_childs.append(childs_select);
 
-		    	form_group_childs.hide();
+				form_group_childs.hide();
 
-		    // *** COMMENT *** //
-		    	var form_comment = $("<div id='"+$i+"_comment' class='form-group'/>");
+			// *** COMMENT *** //
+				var form_comment = $("<div id='"+$i+"_comment' class='form-group'/>");
 
-		    	var comment = $("<input type='text' class='form-control' name='animals["+$i+"][comment]'/>");
-		    	form_comment.append("Commentaire : ");
-		    	form_comment.append(comment);
+				var comment = $("<input type='text' class='form-control' name='animals["+$i+"][comment]'/>");
+				form_comment.append("Commentaire : ");
+				form_comment.append(comment);
 
-		    	form_comment.hide();
+				form_comment.hide();
 
-		    // *** NAME (HIDDEN) *** //
-		    	var animal_name = $("<input type='hidden' id='"+$i+"_name' name='animals["+$i+"][name]' value='"+$UNKNOWN+"'/>");
+			// *** NAME (HIDDEN) *** //
+				var animal_name = $("<input type='hidden' id='"+$i+"_name' name='animals["+$i+"][name]' value='"+$UNKNOWN+"'/>");
 
 
-	    	// *** CONSTRUCT LEFT COLUMN *** //
-		    	left_col.append(form_group_gender);
-		    	left_col.append(form_group_ears);
-		    	left_col.append(form_group_childs);
-		    	left_col.append(form_comment);
-		    	left_col.append(animal_name);
+			// *** CONSTRUCT LEFT COLUMN *** //
+				left_col.append(form_group_gender);
+				left_col.append(form_group_ears);
+				left_col.append(form_group_childs);
+				left_col.append(form_comment);
+				left_col.append(animal_name);
 
-		    	block.append("<h4 class='col-md-12' id='"+$i+"_title'>"+$ANIMAL_DEFAULT_NAME+" "+($i+1)+"</h4>");
-		    	block.append(left_col);
-		    	block.append(center_col);
-		    	block.append(right_col);
+				block.append("<h4 class='col-md-12' id='"+$i+"_title'>"+$ANIMAL_DEFAULT_NAME+" "+($i+1)+"</h4>");
+				block.append(left_col);
+				block.append(center_col);
+				block.append(right_col);
 
-		    	blocks.push(block);
-		    }
+				blocks.push(block);
+			}
 
-		    div_global.append(blocks);
+			div_global.append(blocks);
 
-		    // for each block, initialize the listeners and set the data to display
-		    for ($i = 0; $i < $number_to_display; $i++) {
-		    	set_block_data_and_behaviour($i)
-		    }
+			// for each block, initialize the listeners and set the data to display
+			for ($i = 0; $i < $number_to_display; $i++) {
+				set_block_data_and_behaviour($i)
+			}
 		}
 
 		$number_displayed = $number_to_display;
@@ -342,9 +346,9 @@ function set_block_data_and_behaviour($i) {
 			// Append the possible options to the right_ear select
 			$right_ear_possible_colors.forEach(function($possible_color){
 				right_ear_select.append($('<option>', { 
-			        value: $possible_color,
-			        text : $possible_color
-			    }));
+					value: $possible_color,
+					text : $possible_color
+				}));
 			});
 
 
@@ -393,45 +397,45 @@ function set_left_ears_select_options($id, $gender) {
 	// Append every color possible
 	$ears_colors_dict[$gender]["left_ears"].forEach(function($left_ear_color) {	
 		left_ear_select.append($('<option>', { 
-	        value: $left_ear_color,
-	        text : $left_ear_color
-	    }));
+			value: $left_ear_color,
+			text : $left_ear_color
+		}));
 	});
 }
 
 
 function get_none_option_value() {
 	return $('<option>', { 
-        value: $NONE,
-        text : "Non marqué", 
-        selected: "selected"
-    });
+		value: $NONE,
+		text : "Non marqué", 
+		selected: "selected"
+	});
 }
 
 
 function get_not_counted_option() {
 	return $('<option>', { 
-        value: $UNKNOWN,
-        text : "Non compté"
-    });
+		value: $UNKNOWN,
+		text : "Non compté"
+	});
 }
 
 
 function get_unknown_ear_option() {
 	return $('<option>', { 
-        value: $UNKNOWN,
-        text : "Non identifiable"
-    });
+		value: $UNKNOWN,
+		text : "Non identifiable"
+	});
 }
 
 
 function get_default_option() {
 	return $('<option>', { 
-        value: $UNDEFINED,
-        text : "Sélectionner ...", 
-        disabled : "true",
-        selected: "selected"
-    });
+		value: $UNDEFINED,
+		text : "Sélectionner ...", 
+		disabled : "true",
+		selected: "selected"
+	});
 }
 
 

@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Où est mon bouquetin ?</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<head>
+		<title>Où est mon bouquetin ?</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
-        <!-- STYLESHEETS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-        <link rel="stylesheet" href="static/css/bootstrap-datepicker3.css"/>
-        <link rel="stylesheet" href="static/css/bootstrap-multiselect.css"/>
+		<!-- STYLESHEETS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<link rel="stylesheet" href="static/css/bootstrap-datepicker3.css"/>
+		<link rel="stylesheet" href="static/css/bootstrap-multiselect.css"/>
 
-   		<link rel="stylesheet" href="static/css/style.css">
+		<link rel="stylesheet" href="static/css/style.css">
 
-   		<!-- SCRIPTS -->
-   		<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+		<!-- SCRIPTS -->
+		<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 		<script type="text/javascript" src="http://api.ign.fr/geoportail/api/js/latest/Geoportal.js"></script>
 		<script type="text/javascript" src="static/js/jquery.serialize-object.js"></script>
@@ -22,125 +22,125 @@
 		<script type="text/javascript" src="static/js/page.js"></script>
 		<script type="text/javascript" src="static/js/ign.js"></script>
 		
-    </head>
+	</head>
 
 
-    <body>
-	    <div class="bootstrap-iso">
-            <div class="container-fluid">
-	            <div class="row">
-                    <div class="col-md-12">
-		            	<div class="alert alert-success" id="alert_success" role="alert">
-					    	<h3>Observation ajouté !</h3>
-					    	<button type="button" class="btn btn-success" href="#">Saisir une nouvelle observation</button>
-					    </div> 
-					    <div class="alert alert-danger" id="alert_error" role="alert">
-					    	<h3>Un problème est survenu lors de la sauvegarde :</h3>
-					    	<p id="error_details"></p>
-					    </div>
+	<body>
+		<div class="bootstrap-iso">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="alert alert-success" id="alert_success" role="alert">
+							<h3>Observation ajouté !</h3>
+							<button type="button" class="btn btn-success" href="#">Saisir une nouvelle observation</button>
+						</div> 
+						<div class="alert alert-danger" id="alert_error" role="alert">
+							<h3>Un problème est survenu lors de la sauvegarde :</h3>
+							<p id="error_details"></p>
+						</div>
 					</div>
 				</div>
-                <div class="row">
-                    <div class="col-md-12">
-                    	<div class="header">
-	                    	<img src="/static/images/logo_pnm_vert.png" class="img-responsive" alt="Logo PNM"/>
-	                        <h1>Observation d'un groupe de bouquetin</h1>
-                        </div>
-                    </div>
-                </div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="header">
+							<img src="/static/images/logo_pnm_vert.png" class="img-responsive" alt="Logo PNM"/>
+							<h1>Observation d'un groupe de bouquetin</h1>
+						</div>
+					</div>
+				</div>
 
-                <br>
+				<br>
 				<form id="form">
 					<div class="row">
 						<div class="col-md-12">
-	                        <div class="form-group">
-	                            <label for="name_surname">Noms et prénoms des observateurs</label><br>
-	                            <select class="form-control" name="observer_names" id="observer_names" multiple="multiple">
-	                            	<!-- Options added by page.js -->
-	                            </select>
-	                        </div>
-	                    </div>
-	            	</div>
+							<div class="form-group">
+								<label for="name_surname">Noms et prénoms des observateurs</label><br>
+								<select class="form-control" name="observer_names" id="observer_names" multiple="multiple">
+									<!-- Options added by page.js -->
+								</select>
+							</div>
+						</div>
+					</div>
 
-	                <div class="row">
-	                    <div class="col-md-2">
-                            <div class="form-group">
-                                <label for="date">Date</label>
-                                <input type="datetime" class="form-control" id="date" name="date" placeholder="01/01/2000">
-                            </div>
-                            
-                            <div class="form-group">
-                            	<label for="coord_north">Position des individus</label>
-                                <span class="help-block">Cliquer sur la carte</span>
-                                <div class="input-group">
-                                	<input type="text" class="form-control" id="coord_north" placeholder="0" title="Mis à jour lors du clic sur la carte" disabled>
-                                	<span class="input-group-addon" id="coord_north_addon">N</span>
-                                	<!-- Hidden field used to serialize form data with jquery.serialize-object (a disabled input is not serialized) -->
-                                	<input type="hidden" class="form-control" id="coord_north_hidden" name="coord[north]">
-                                </div>
-                                <br>
-                                <div class="input-group">
-                                	<input type="text" class="form-control" id="coord_east" placeholder="0" title="Mis à jour lors du clic sur la carte" disabled>
-                                	<span class="input-group-addon" id="coord_east_addon">E</span>
-                                	<!-- Hidden field used to serialize form data with jquery.serialize-object (a disabled input is not serialized) -->
-                                	<input type="hidden" class="form-control" id="coord_east_hidden" name="coord[east]">
-                                </div>
-                            </div>
-                                
-                            <div class="form-group">
-                                <label for="tagged_count">Nombre d'individus marqués</label>
-                                <select class="form-control" id="tagged_count">
-                                    <!-- Options added by page.js -->
-                                </select>
-                            </div>
+					<div class="row">
+						<div class="col-md-2">
+							<div class="form-group">
+								<label for="date">Date</label>
+								<input type="datetime" class="form-control" id="date" name="date" placeholder="01/01/2000">
+							</div>
+							
+							<div class="form-group">
+								<label for="coord_north">Position des individus</label>
+								<span class="help-block">Cliquer sur la carte</span>
+								<div class="input-group">
+									<input type="text" class="form-control" id="coord_north" placeholder="0" title="Mis à jour lors du clic sur la carte" disabled>
+									<span class="input-group-addon" id="coord_north_addon">N</span>
+									<!-- Hidden field used to serialize form data with jquery.serialize-object (a disabled input is not serialized) -->
+									<input type="hidden" class="form-control" id="coord_north_hidden" name="coord[north]">
+								</div>
+								<br>
+								<div class="input-group">
+									<input type="text" class="form-control" id="coord_east" placeholder="0" title="Mis à jour lors du clic sur la carte" disabled>
+									<span class="input-group-addon" id="coord_east_addon">E</span>
+									<!-- Hidden field used to serialize form data with jquery.serialize-object (a disabled input is not serialized) -->
+									<input type="hidden" class="form-control" id="coord_east_hidden" name="coord[east]">
+								</div>
+							</div>
+								
+							<div class="form-group">
+								<label for="tagged_count">Nombre d'individus marqués</label>
+								<select class="form-control" id="tagged_count">
+									<!-- Options added by page.js -->
+								</select>
+							</div>
 
-                            <div class="form-group">
-                                <label for="male_count">Nombre total de mâles</label>
-                                <input type="number" class="form-control" name="male_count" id="male_count" min="0">
-                            </div>
+							<div class="form-group">
+								<label for="male_count">Nombre total de mâles</label>
+								<input type="number" class="form-control" name="male_count" id="male_count" min="0" value="0">
+							</div>
 
-                            <div class="form-group">
-                                <label for="female_count">Nombre total de femelles</label>
-                                <input type="number" class="form-control" name="female_count" id="female_count" min="0">
-                            </div>
+							<div class="form-group">
+								<label for="female_count">Nombre total de femelles</label>
+								<input type="number" class="form-control" name="female_count" id="female_count" min="0" value="0">
+							</div>
 
-                            <div class="form-group">
-                                <label for="child_count">Nombre total de cabris</label>
-                                <input type="number" class="form-control" name="child_count" id="child_count" min="0">
-                            </div>
-	                    </div>
+							<div class="form-group">
+								<label for="child_count">Nombre total de cabris</label>
+								<input type="number" class="form-control" name="child_count" id="child_count" min="0" value="0">
+							</div>
+						</div>
 
-	                    <div class="col-md-10">
+						<div class="col-md-10">
 							<div id="map-canvas"></div>
 						</div>
 					</div>
 
 					<div class="row" id="animals_details_row">
-                        <div class="col-md-12" id="animals_details"></div>
-                    </div>
+						<div class="col-md-12" id="animals_details"></div>
+					</div>
 
-                    <div class="row">
-                    	<div class="col-md-12">
-	                    	<label for="comment">Commentaire global</label>
-	                    	<textarea class="form-control" rows="5" id="comment" name="comment" placeholder="Ajouter un commentaire global sur l'observation"></textarea>
-                    	</div>
-                    </div>
-                </form>
+					<div class="row">
+						<div class="col-md-12">
+							<label for="comment">Commentaire global</label>
+							<textarea class="form-control" rows="5" id="comment" name="comment" placeholder="Ajouter un commentaire global sur l'observation"></textarea>
+						</div>
+					</div>
+				</form>
 
-                <div class="row">
-                	<div class="col-md-12 text-center">
-                		<button id="submit_button" class="btn btn-primary" data-loading-text="Validation ..." data-complete-text="Validé">Valider</button>
-                	</div>
-                </div>
+				<div class="row">
+					<div class="col-md-12 text-center">
+						<button id="submit_button" class="btn btn-primary" data-loading-text="Validation ..." data-complete-text="Validé">Valider</button>
+					</div>
+				</div>
 
-                <div class="row">
-                	<div class="col-md-12 text-center footer">
-                		<p>
-                			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                		</p>
-                	</div>
-                </div>
-            </div>
-        </div>
-    </body>
+				<div class="row">
+					<div class="col-md-12 text-center footer">
+						<p>
+							Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
 </html>

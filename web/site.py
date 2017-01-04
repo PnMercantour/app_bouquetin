@@ -1,6 +1,8 @@
 from pathlib import Path
-from flask import Flask, render_template, request, redirect, abort, Response, jsonify
+from flask import Flask, render_template, request, redirect, abort, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import load_only
+from sqlalchemy.ext.associationproxy import association_proxy
 import json
 
 
@@ -16,16 +18,30 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
+people_observation_table = db.Table('people_observation',
+    db.Column('people_id', db.Integer, db.ForeignKey('people.id')),
+    db.Column('observation_id', db.Integer, db.ForeignKey('observation.id'))
+)
+
+
 class Observation(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	date = db.Column(db.String())
-	number = db.Column(db.String())
-	observer_names = db.Column(db.String())
 	coord_north = db.Column(db.String())
 	coord_east = db.Column(db.String())
 	male_count = db.Column(db.String())
 	female_count = db.Column(db.String())
 	child_count = db.Column(db.String())
+	comment = db.Column(db.String())
+	people = db.relationship("People", secondary = people_observation_table, backref = "observation")
+
+	def to_json(obs):
+		people_list = []
+		for people in obs.people:
+			people_list.append(people.name + " " + people.surname)
+		return dict( 
+			date = obs.date, 
+			people = people_list)
 
 
 class TaggedAnimal(db.Model):
@@ -44,6 +60,15 @@ class TaggedAnimal(db.Model):
 			ears = animal.ears,
 			catch_date = animal.catch_date,
 			picture = animal.picture)
+
+
+class TaggedAnimalObservation(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	observation_id = db.Column(db.Integer, db.ForeignKey('observation.id'))
+	animal_id = db.Column(db.Integer, db.ForeignKey('tagged_animal.id'))
+	child_count = db.Column(db.String())
+	observation = db.relationship(Observation, backref = "observation")
+	animal = db.relationship(TaggedAnimal, backref = "animal")
 
 
 class Department(db.Model):
@@ -74,38 +99,83 @@ class People(db.Model):
 db.create_all()
 
 
+# MAIN PAGE HANDLER
 @app.route('/', methods=['GET'])
 def index():
 	return render_template('index.html')
 
 
-
+# WEBSERVICE TO ADD AN OBSERVATION
 @app.route('/obs', methods=['PUT'])
 def create_obs():
 	try:
+		# VALIDATE DATA
+		missing_fields = []
+		if request.json['date'] == "":
+			missing_fields.append("date de l'observation")
+		if request.json['coord']['north'] == "" or request.json['coord']['east'] == "":
+			missing_fields.append("coordonnées")
+		if request.json['male_count'] == "": 
+			missing_fields.append("nombre de mâles")
+		if request.json['female_count'] == "":
+			missing_fields.append("nombre de femelles")
+		if request.json['child_count'] == "": 
+			missing_fields.append("nombre de cabris")
+		if len(request.json['observer_ids']) == 0 :
+			missing_fields.append("noms des observateur")
+		for animal in request.json['animals']:
+			if 'ears' not in animal:
+				missing_fields.append("boucles d'un individu marqué")
+			if 'gender' in animal:
+				if animal['gender'] == "female":
+					if 'childs' not in animal:
+						missing_fields.append("nombre de cabris d'un individu marqué")
+			else:
+				missing_fields.append("genre d'un individu marqué")
+
+		if len(missing_fields) > 0 :
+			missing_fields_string = ""
+			for field in missing_fields:
+				missing_fields_string += field + ", "
+			missing_fields_string = missing_fields_string[:-2] # removes trailing coma
+			return make_response(jsonify({'message':'Les champs suivants n\'ont pas été remplis : ' + missing_fields_string}), 400)
+
+		# DATA SERIALIZATION
 		new_obs = Observation(
 			date = request.json['date'],
-			number = request.json['number'],
-			observer_name = request.json['observer_names'],
 			coord_north = request.json['coord']['north'], 
 			coord_east = request.json['coord']['east'],
 			male_count = request.json['male_count'],
 			female_count = request.json['female_count'],
-			child_count = request.json['child_count'])
+			child_count = request.json['child_count'],
+			comment = request.json['comment'])
 
-	except Exception as e:
-		return Response('{"message":{}}'.format(str(e)), status = 400)
+		for people_id in request.json['observer_ids']:
+			new_obs.people.append(People.query.get(people_id))
 
+		print(db.session.add(new_obs))
 
-	try:
-		db.session.add(new_obs)
+		for animal in request.json['animals']:
+			new_relation = TaggedAnimalObservation(
+				observation = new_obs, 
+				animal = TaggedAnimal.query.get(animal['id']))
+			if animal['gender']== "female":
+				new_relation.child_count = animal['childs']
+			else:
+				new_relation.child_count = ""
+
+			db.session.add(new_relation)
+			print(new_relation)
+
 		db.session.commit()
-		return Response('{"message": "OK"}', status = 200)
+		return make_response(jsonify({'message':'Observation ajoutée'}), 201)
 
 	except Exception as e:
+		raise e
 		abort(500)
 	
 
+# WEBSERVICE TO GET ANIMALS AND PEOPLE DATA
 @app.route('/data', methods=['GET'])
 def get_data():
 	try:
@@ -125,12 +195,35 @@ def get_data():
 		for dept in departments:
 			json_data['departments'].append(Department.to_json(dept))
 
-		return Response(json.dumps(json_data), status = 200, content_type='application/json; charset=utf-8')
+		response = make_response(json.dumps(json_data), 200)
+		response.headers['Content-Type'] = 'application/json; charset=utf-8'
+		return response
 
 	except Exception as e:
-		print("ERROR > " + str(e))
+		raise e
 		abort(500)
 	
+
+# PAGE DISPLAYING PLAIN TEXT DATA EXTRACTED FROM DB
+@app.route('/results', methods=['GET'])
+def get_results():
+	try:
+		observations = Observation.query.all()
+		
+		json_data = {}
+		json_data['observations'] = []
+
+		for obs in observations:
+			json_data['observations'].append(Observation.to_json(obs))
+
+		response = make_response(json.dumps(json_data), 200)
+		response.headers['Content-Type'] = 'application/json; charset=utf-8'
+		return response
+
+	except Exception as e:
+		raise e
+		abort(500)
+
 
 
 if __name__ == '__main__':

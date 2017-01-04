@@ -191,7 +191,10 @@ function add_form_block_for_each_animal() {
 
 				// Append default and unknown value
 				childs_select.append(get_default_option());
-				childs_select.append(get_not_counted_option());
+				childs_select.append($('<option>', { 
+					value: $UNKNOWN,
+					text : "Non compté"
+				}));
 
 				// Append all possible options
 				$CONF.childs_possible_values.forEach(function (i) {
@@ -222,6 +225,7 @@ function add_form_block_for_each_animal() {
 				left_col.append(form_comment);
 
 				block.append("<h4 class='col-md-12' id='"+$i+"_title'>"+$ANIMAL_DEFAULT_NAME+" "+($i+1)+"</h4>");
+				block.append("<input type='hidden' name='animals["+$i+"][id]'' id='"+$i+"_id' value=''/>");
 				block.append(left_col);
 				block.append(center_col);
 				block.append(right_col);
@@ -249,6 +253,7 @@ function set_block_data_and_behaviour($id) {
 	var comment = $("#"+$id+"_comment");
 	var identity = $("#"+$id+"_identity");
 	var details = $("#"+$id+"_details");
+	var hidden_id = $("#"+$id+"_id");
 
 	// Set listener on radio button gender to change the display of the ears selects and child selects
 	$("input[name='animals["+$id+"][gender]']").click(function() {
@@ -275,9 +280,6 @@ function set_block_data_and_behaviour($id) {
 
 		// Display or hide the child select
 		if (radio_gender_checked.val() == "male") {
-			childs_select.filter(function() { 
-				return $(this).text() == $UNDEFINED;
-			}).prop('disabled', 'disabled');
 			childs_select.hide();
 		}
 
@@ -298,25 +300,10 @@ function set_block_data_and_behaviour($id) {
 						identity.append("<img src='" +$CONF.animals_pictures_dir+$animal.picture+ "' class='animal-img img-rounded center-block'/>");
 						details.append("<p><b>Date de capture : </b>"+$animal.catch_date+"</p>");
 					}
+					hidden_id.val($animal.id);
 				}
 			});
 		});
-	});
-}
-
-
-function get_not_counted_option() {
-	return $('<option>', { 
-		value: $UNKNOWN,
-		text : "Non compté"
-	});
-}
-
-
-function get_unknown_ear_option() {
-	return $('<option>', { 
-		value: $UNKNOWN,
-		text : "Non identifiable"
 	});
 }
 
@@ -333,13 +320,12 @@ function get_default_option() {
 
 function submit_button() {
 	$("#submit_button").click(function() {
-		$(this).text('Validation123 ...');
+		$(this).text('Validation ...');
 		$(this).prop('disabled', true);
-
+		
 		// serializeObject does not support multiple select => need to set the value manually
 		var form_data = $("#form").serializeObject();
 		form_data.observer_ids = $("#observer_ids").val();
-
 
 
 		console.log(JSON.stringify(form_data));
@@ -361,8 +347,10 @@ function submit_button() {
 				$('#alert_success').show();
 			}, 
 			error: function(result, status, error) {
-				console.log("error");
-				$('#error_details').text(error);
+				console.log(result.responseJSON);
+				console.log(status);
+				console.log(error);
+				$('#error_details').text(result.responseJSON.message);
 				$('#alert_error').show();
 				$("#submit_button").prop('disabled', false);
 				$("#submit_button").text("Valider");

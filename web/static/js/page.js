@@ -22,6 +22,7 @@ $(document).ready(function() {
 					add_form_block_for_each_animal();
 
 					submit_button();
+					reload_button();
 				}
 			});
 
@@ -322,15 +323,10 @@ function submit_button() {
 	$("#submit_button").click(function() {
 		$(this).text('Validation ...');
 		$(this).prop('disabled', true);
-		
+
 		// serializeObject does not support multiple select => need to set the value manually
 		var form_data = $("#form").serializeObject();
 		form_data.observer_ids = $("#observer_ids").val();
-
-
-		console.log(JSON.stringify(form_data));
-
-
 
 		// Send data to backend
 		$.ajax({
@@ -342,15 +338,13 @@ function submit_button() {
 
 			success: function(data, status) {
 				$("#submit_button").text('Validé !');
-				console.log("success");
 				$('#alert_error').hide();
 				$('#alert_success').show();
 			}, 
 			error: function(result, status, error) {
-				console.log(result.responseJSON);
-				console.log(status);
-				console.log(error);
-				$('#error_details').text(result.responseJSON.message);
+				if (result.responseJSON.message) {
+					$('#error_details').text(result.responseJSON.message);
+				}
 				$('#alert_error').show();
 				$("#submit_button").prop('disabled', false);
 				$("#submit_button").text("Valider");
@@ -360,5 +354,12 @@ function submit_button() {
 			}
 		});
 		
+	});
+}
+
+
+function reload_button() {
+	$("#reload_button").click(function() {
+		window.location.replace(window.location.pathname + window.location.search + window.location.hash);
 	});
 }

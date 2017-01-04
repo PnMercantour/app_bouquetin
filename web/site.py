@@ -122,16 +122,17 @@ def create_obs():
 		if request.json['child_count'] == "": 
 			missing_fields.append("nombre de cabris")
 		if len(request.json['observer_ids']) == 0 :
-			missing_fields.append("noms des observateur")
-		for animal in request.json['animals']:
-			if 'ears' not in animal:
-				missing_fields.append("boucles d'un individu marqué")
-			if 'gender' in animal:
-				if animal['gender'] == "female":
-					if 'childs' not in animal:
-						missing_fields.append("nombre de cabris d'un individu marqué")
-			else:
-				missing_fields.append("genre d'un individu marqué")
+			missing_fields.append("noms des observateurs")
+		if 'animals' in request.json :
+			for animal in request.json['animals']:
+				if 'ears' not in animal:
+					missing_fields.append("boucles d'un individu marqué")
+				if 'gender' in animal:
+					if animal['gender'] == "female":
+						if 'childs' not in animal:
+							missing_fields.append("nombre de cabris d'un individu marqué")
+				else:
+					missing_fields.append("genre d'un individu marqué")
 
 		if len(missing_fields) > 0 :
 			missing_fields_string = ""
@@ -153,20 +154,19 @@ def create_obs():
 		for people_id in request.json['observer_ids']:
 			new_obs.people.append(People.query.get(people_id))
 
-		print(db.session.add(new_obs))
+		if 'animals' in request.json:
+			for animal in request.json['animals']:
+				new_relation = TaggedAnimalObservation(
+					observation = new_obs, 
+					animal = TaggedAnimal.query.get(animal['id']))
+				if animal['gender']== "female":
+					new_relation.child_count = animal['childs']
+				else:
+					new_relation.child_count = ""
 
-		for animal in request.json['animals']:
-			new_relation = TaggedAnimalObservation(
-				observation = new_obs, 
-				animal = TaggedAnimal.query.get(animal['id']))
-			if animal['gender']== "female":
-				new_relation.child_count = animal['childs']
-			else:
-				new_relation.child_count = ""
+				db.session.add(new_relation)
 
-			db.session.add(new_relation)
-			print(new_relation)
-
+		db.session.add(new_obs)
 		db.session.commit()
 		return make_response(jsonify({'message':'Observation ajoutée'}), 201)
 

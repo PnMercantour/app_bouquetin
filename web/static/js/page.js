@@ -181,7 +181,7 @@ function add_form_block_for_each_animal() {
 				var form_group_ears = $("<div id='"+$i+"_ears' class='form-group'/>");
 
 				var ears_select = $("<select class='form-control' name='animals["+$i+"][ears]'/>");
-				form_group_ears.append("Boucles : ");
+				form_group_ears.append("Boucles <i>(gauche - droite)</i> :");
 				form_group_ears.append(ears_select);
 
 				form_group_ears.hide();

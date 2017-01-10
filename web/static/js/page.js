@@ -53,11 +53,25 @@ function initialize_datepicker() {
 	var date_input=$("#date"); 
 	var container=$(".bootstrap-iso form").length>0 ? $(".bootstrap-iso form").parent() : "body";
 	var options={
-	  format: "dd/mm/yyyy",
-	  container: container,
-	  todayHighlight: true,
-	  autoclose: true,
+		language: "fr",
+		container: container,
+		todayHighlight: true,
+		autoclose: true
 	};
+
+	$.fn.datepicker.dates['fr'] = {
+		days: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+		daysShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
+		daysMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+		months: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+		monthsShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
+		today: "Aujourd'hui",
+		clear: "Nettoyer",
+		format: "dd/mm/yyyy",
+		titleFormat: "MM yyyy", /* Leverages same syntax as 'format' */
+		weekStart: 1
+	};
+
 	date_input.datepicker(options);
 }
 
@@ -94,11 +108,11 @@ function initialize_select_people() {
 	// from bootstrap-multiselect.js
 	$("#observer_ids").multiselect({
 		enableCaseInsensitiveFiltering: true,
-		maxHeight: 200,
+		maxHeight: 300,
 		includeSelectAllOption: false, 
 		enableCollapsibleOptGroups: true, 
 		selectAllText: 'Tous !', 
-		buttonWidth: '200px', 
+		buttonWidth: '300px', 
 		buttonText: function(options, select) {
 			if (options.length === 0) {
 				return 'Aucun';

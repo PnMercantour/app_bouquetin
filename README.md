@@ -28,6 +28,8 @@ De la configuration additionnelle peut être trouvée dans le fichier : ```scien
 - ```childs_possible_values``` : valeurs possibles du selecteur "Cabris"
 - ```animals_pictures_dir``` : répertoire contenant les photos des individus marqués
 
+## Sauvegarde de la base
+Un cron doit être mis en place afin de dumper la base et sauvegarder ce dump sur un serveur différent.
 
 # Développeurs
 > Note : Application créée comme une application jetable => peu de configuration possible sans toucher au code

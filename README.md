@@ -16,7 +16,6 @@ $ python3 site.py
 - Un fichier a été créé : science_participative/var/db.sqlite
 
 ## Initialisation des données
-Fichier ```db_init.sql``` non versionné car il contient les identités de personnes du PNM (problème loi I&L).
 ```bash
 $ sqlite3 db.sqlite < science_participative/var/db_init.sql
 ```

@@ -362,9 +362,6 @@ function submit_button() {
 				$('#alert_error').show();
 				$("#submit_button").prop('disabled', false);
 				$("#submit_button").text("Valider");
-			}, 
-			complete: function() {
-				window.scrollTo(0, 0);
 			}
 		});
 		

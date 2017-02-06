@@ -9,10 +9,12 @@ import json
 app = Flask(__name__) 
 
 PROJECT_DIR = Path(__file__).absolute().parent
-VAR_DIR = PROJECT_DIR.parent / 'var'
-DB_PATH = VAR_DIR / 'db.sqlite'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + str(DB_PATH)
+# Get config from json
+with open(str(PROJECT_DIR / 'static/conf.json')) as conf_file:
+    conf = json.load(conf_file)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://' + conf['database_uri']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)

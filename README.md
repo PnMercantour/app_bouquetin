@@ -6,14 +6,11 @@ Préalables : git, python3, pip, sqlite3
 $ git clone git@github.com:nicolasmanman/science_participative.git
 ```
 
-## Création de la base de donnée
+## Installation
 ```bash
 $ pip install -r requirements.txt
-$ cd science_participative/web
-$ python3 site.py
 ```
-- Attendre l'initialisation et arrêter le server (CTRL-C)
-- Un fichier a été créé : science_participative/var/db.sqlite
+Selon l'OS, on peut avoir besoin d'installer : `python-psycopg2 libpq-dev gcc python3-dev` pour pouvoir installer la librairie python `psycopg2`
 
 ## Initialisation des données
 ```bash

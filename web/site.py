@@ -5,28 +5,39 @@ from sqlalchemy.orm import load_only
 from sqlalchemy.ext.associationproxy import association_proxy
 import json
 
-
 app = Flask(__name__) 
 
 PROJECT_DIR = Path(__file__).absolute().parent
 
 # Get config from json
 with open(str(PROJECT_DIR / 'static/conf.json')) as conf_file:
-    conf = json.load(conf_file)
+	with open(str(PROJECT_DIR / 'conf_backend.json')) as backend_conf_file:
+		conf = { **json.load(conf_file), **json.load(backend_conf_file) }
+
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://' + conf['database_uri']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+
+# DB MODEL
 db = SQLAlchemy(app)
 
+class People(db.Model):
+	__tablename__ = "t_roles"
+	__table_args__ = {'schema' : conf['postgres_schema_users']}
+	id_role = db.Column(db.Integer, primary_key=True)
+	nom_role = db.Column(db.String())
+	prenom_role = db.Column(db.String())
+	groupe = db.Column(db.Boolean)
 
-people_observation_table = db.Table('people_observation',
-    db.Column('people_id', db.Integer, db.ForeignKey('people.id')),
-    db.Column('observation_id', db.Integer, db.ForeignKey('observation.id'))
-)
-
+	def to_json(people):
+		return dict(
+			id = people.id_role, 
+			name = people.nom_role, 
+			surname = people.prenom_role)
 
 class Observation(db.Model):
+	__table_args__ = {'schema' : conf['postgres_schema_data']}
 	id = db.Column(db.Integer, primary_key=True)
 	date = db.Column(db.String())
 	coord_north = db.Column(db.String())
@@ -35,18 +46,10 @@ class Observation(db.Model):
 	female_count = db.Column(db.String())
 	child_count = db.Column(db.String())
 	comment = db.Column(db.String())
-	people = db.relationship("People", secondary = people_observation_table, backref = "observation")
-
-	def to_json(obs):
-		people_list = []
-		for people in obs.people:
-			people_list.append(people.name + " " + people.surname)
-		return dict( 
-			date = obs.date, 
-			people = people_list)
 
 
 class TaggedAnimal(db.Model):
+	__table_args__ = {'schema' : conf['postgres_schema_data']}
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String())
 	gender = db.Column(db.String())
@@ -63,39 +66,22 @@ class TaggedAnimal(db.Model):
 			catch_date = animal.catch_date,
 			picture = animal.picture)
 
-
 class TaggedAnimalObservation(db.Model):
+	__table_args__ = {'schema' : conf['postgres_schema_data']}
 	id = db.Column(db.Integer, primary_key=True)
-	observation_id = db.Column(db.Integer, db.ForeignKey('observation.id'))
-	animal_id = db.Column(db.Integer, db.ForeignKey('tagged_animal.id'))
+	observation_id = db.Column(db.Integer, db.ForeignKey(conf['postgres_schema_data'] + '.observation.id'))
+	animal_id = db.Column(db.Integer, db.ForeignKey(conf['postgres_schema_data'] + '.tagged_animal.id'))
 	child_count = db.Column(db.String())
-	observation = db.relationship(Observation, backref = "observation")
-	animal = db.relationship(TaggedAnimal, backref = "animal")
+	observation = db.relationship(Observation, backref = 'animal_obs', foreign_keys=[observation_id])
+	animal = db.relationship(TaggedAnimal, backref = 'obs_animals', foreign_keys=[animal_id])
 
-
-class Department(db.Model):
+class PeopleObservation(db.Model):
+	__table_args__ = {'schema' : conf['postgres_schema_data']}
 	id = db.Column(db.Integer, primary_key=True)
-	name = db.Column(db.String())
-	people = db.relationship("People")
-
-	def to_json(dept):
-		return dict(
-			id = dept.id, 
-			name = dept.name)
-
-
-class People(db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	name = db.Column(db.String())
-	surname = db.Column(db.String())
-	department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
-
-	def to_json(people):
-		return dict(
-			id = people.id, 
-			name = people.name, 
-			surname = people.surname,
-			department_id = people.department_id)
+	observation_id = db.Column(db.Integer, db.ForeignKey(conf['postgres_schema_data'] + '.observation.id'))
+	people_id = db.Column(db.Integer, db.ForeignKey(conf['postgres_schema_users'] + '.t_roles.id_role'))
+	observation = db.relationship(Observation, backref = 'people_obs', foreign_keys=[observation_id])
+	people = db.relationship(People, backref = 'obs_people', foreign_keys=[people_id])
 
 
 db.create_all()
@@ -153,20 +139,24 @@ def create_obs():
 			child_count = request.json['child_count'],
 			comment = request.json['comment'])
 
-		for people_id in request.json['observer_ids']:
-			new_obs.people.append(People.query.get(people_id))
+		if 'observer_ids' in request.json:
+			for people_id in request.json['observer_ids']:
+				new_people_obs_relation = PeopleObservation(
+					observation = new_obs, 
+					people = People.query.get(people_id))
+				db.session.add(new_people_obs_relation)
 
 		if 'animals' in request.json:
 			for animal in request.json['animals']:
-				new_relation = TaggedAnimalObservation(
+				new_animal_obs_relation = TaggedAnimalObservation(
 					observation = new_obs, 
 					animal = TaggedAnimal.query.get(animal['id']))
 				if animal['gender']== "female":
-					new_relation.child_count = animal['childs']
+					new_animal_obs_relation.child_count = animal['childs']
 				else:
-					new_relation.child_count = ""
+					new_animal_obs_relation.child_count = None
 
-				db.session.add(new_relation)
+				db.session.add(new_animal_obs_relation)
 
 		db.session.add(new_obs)
 		db.session.commit()
@@ -181,21 +171,17 @@ def create_obs():
 @app.route('/data', methods=['GET'])
 def get_data():
 	try:
-		animals = TaggedAnimal.query.order_by(TaggedAnimal.ears)
-		peoples = People.query.order_by(People.name, People.surname)
-		departments = Department.query.all()
-
 		json_data = {}
 		json_data['animals'] = []
 		json_data['peoples'] = []
-		json_data['departments'] = []
 
-		for animal in animals:
-			json_data['animals'].append(TaggedAnimal.to_json(animal))
+		peoples = People.query.order_by(People.nom_role).filter(People.groupe == False)
+		animals = TaggedAnimal.query.order_by(TaggedAnimal.ears)
+
 		for people in peoples:
 			json_data['peoples'].append(People.to_json(people))
-		for dept in departments:
-			json_data['departments'].append(Department.to_json(dept))
+		for animal in animals:
+			json_data['animals'].append(TaggedAnimal.to_json(animal))
 
 		response = make_response(json.dumps(json_data), 200)
 		response.headers['Content-Type'] = 'application/json; charset=utf-8'
@@ -204,28 +190,6 @@ def get_data():
 	except Exception as e:
 		raise e
 		abort(500)
-	
-
-# PAGE DISPLAYING PLAIN TEXT DATA EXTRACTED FROM DB
-@app.route('/results', methods=['GET'])
-def get_results():
-	try:
-		observations = Observation.query.all()
-		
-		json_data = {}
-		json_data['observations'] = []
-
-		for obs in observations:
-			json_data['observations'].append(Observation.to_json(obs))
-
-		response = make_response(json.dumps(json_data), 200)
-		response.headers['Content-Type'] = 'application/json; charset=utf-8'
-		return response
-
-	except Exception as e:
-		raise e
-		abort(500)
-
 
 
 if __name__ == '__main__':

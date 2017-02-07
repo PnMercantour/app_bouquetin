@@ -1,0 +1,5 @@
+{
+	"database_uri" : "", 
+	"postgres_schema_data" : "", 
+	"postgres_schema_users" : ""
+}

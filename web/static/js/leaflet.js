@@ -5,14 +5,14 @@ $(document).ready(function() {
 
 		// Create icon
 		var animalIcon = L.icon({
-		    iconUrl: '/static/images/icon.png',
-		    shadowUrl: '/static/images/shadow.png',
+			iconUrl: '/static/images/icon.png',
+			shadowUrl: '/static/images/shadow.png',
 
-		    iconSize:     [55, 80], // size of the icon
-		    shadowSize:   [0, 0], // size of the shadow
-		    iconAnchor:   [25, 80], // point of the icon which will correspond to marker's location
-		    shadowAnchor: [-2, 62],  // the same for the shadow
-		    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+			iconSize:     [55, 80], // size of the icon
+			shadowSize:   [0, 0], // size of the shadow
+			iconAnchor:   [25, 80], // point of the icon which will correspond to marker's location
+			shadowAnchor: [-2, 62],  // the same for the shadow
+			popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
 		});
 
 		// Set variables

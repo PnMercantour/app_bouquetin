@@ -1,2 +1,4 @@
 *.pyc
 *.sqlite
+web/conf_backend.json
+web/static/conf.json

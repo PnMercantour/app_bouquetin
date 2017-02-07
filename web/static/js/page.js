@@ -89,17 +89,9 @@ function initialize_select_tagged_count() {
 function initialize_select_people() {
 	// Documentation : http://davidstutz.github.io/bootstrap-multiselect
 	var observer_ids_select = $("#observer_ids");
-	
-	$DATA.departments.forEach(function ($i) {
-		observer_ids_select.append($('<optgroup>', {
-			label: $i.name, 
-			class: "group-"+$i.id, 
-			id: "department-"+$i.id
-		}));
-	});
 		
 	$DATA.peoples.forEach(function($j) {
-		$('#department-'+$j.department_id).append($('<option>', { 
+		$("#observer_ids").append($('<option>', { 
 			value: $j.id,
 			text : $j.name + " " + $j.surname
 		}));
@@ -110,7 +102,7 @@ function initialize_select_people() {
 		enableCaseInsensitiveFiltering: true,
 		maxHeight: 300,
 		includeSelectAllOption: false, 
-		enableCollapsibleOptGroups: true, 
+		enableCollapsibleOptGroups: false, 
 		selectAllText: 'Tous !', 
 		buttonWidth: '300px', 
 		buttonText: function(options, select) {

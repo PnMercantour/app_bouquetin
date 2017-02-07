@@ -1,0 +1,9 @@
+{
+	"ign_api_key": "", 
+	"ign_layer" : "GEOGRAPHICALGRIDSYSTEMS.MAPS", 
+	"backend_url": "",
+	"animal_max_tagged_count" : 25, 
+	"childs_possible_values" : ["0", "1", "2"],
+	"animals_pictures_dir" : "/static/pictures/", 
+	"low_zoom_alert_message" : "Le niveau de zoom n'est pas suffisament élevé pour placer un point précis !"
+}

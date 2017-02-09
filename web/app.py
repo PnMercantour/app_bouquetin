@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pathlib import Path
 from flask import Flask, render_template, request, redirect, abort, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
@@ -12,8 +13,7 @@ PROJECT_DIR = Path(__file__).absolute().parent
 # Get config from json
 with open(str(PROJECT_DIR / 'static/conf.json')) as conf_file:
 	with open(str(PROJECT_DIR / 'conf_backend.json')) as backend_conf_file:
-		conf = { **json.load(conf_file), **json.load(backend_conf_file) }
-
+		conf = dict(json.load(conf_file), **json.load(backend_conf_file)) 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://' + conf['database_uri']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -177,12 +177,12 @@ def get_data():
 
 		peoples = People.query.order_by(People.nom_role).filter(People.groupe == False)
 		animals = TaggedAnimal.query.order_by(TaggedAnimal.ears)
-
+		
 		for people in peoples:
 			json_data['peoples'].append(People.to_json(people))
 		for animal in animals:
 			json_data['animals'].append(TaggedAnimal.to_json(animal))
-
+		
 		response = make_response(json.dumps(json_data), 200)
 		response.headers['Content-Type'] = 'application/json; charset=utf-8'
 		return response

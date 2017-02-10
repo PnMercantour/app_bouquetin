@@ -25,9 +25,9 @@
      | surname  |
      +----------+
 ```
-## Initialisation
+## Initialisation de la base
 - Créer un nouveau schéma visant à accueillir les données dans la base Postgres
-- Initialiser la table TaggedAnimal avec des données
+- Initialiser la table TaggedAnimal avec des données (détaillé plus loin)
 
 # Installation
 > Hypothèse d'une base Postgres déjà configuré
@@ -100,5 +100,6 @@ sudo /etc/init.d/nginx restart
 
 ### Lancement
 ```bash
+cd path/to/project/science_participative/web/
 gunicorn app:app
 ```

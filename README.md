@@ -35,8 +35,13 @@
 Préalables : 
 ```bash
 sudo apt update
-sudo apt install git python3 nginx gunicorn
+sudo apt install git python3 nginx 
 pip install -U pip
+cd path/to/project/science_participative
+source venv/bin/activate
+cd venv
+venv/bin/gunicorn app:app
+gunicorn
 ```
 
 ## Application

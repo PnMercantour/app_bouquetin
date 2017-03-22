@@ -35,7 +35,7 @@
 Préalables : 
 ```bash
 sudo apt update
-sudo apt install git python3 nginx gunicorn
+sudo apt install git python3 nginx 
 pip install -U pip
 ```
 
@@ -97,9 +97,13 @@ puis :
 ```bash
 sudo /etc/init.d/nginx restart
 ```
-
+### Installer gunicorn dans le venv
+```bash
+source venv/bin/activate
+pip install gunicorn
+```
 ### Lancement
 ```bash
-cd path/to/project/science_participative/web/
-gunicorn app:app
+cd path/to/project/science_participative/web
+venv/bin/gunicorn app:app
 ```

@@ -3,7 +3,7 @@
 	"ign_layer" : "GEOGRAPHICALGRIDSYSTEMS.MAPS", 
 	"backend_url": "",
 	"animal_max_tagged_count" : 25, 
-	"childs_possible_values" : ["0", "1", "2"],
+	"childs_possible_values" : ["Sûr 1 cabri", "Sûr 2 cabris", "Probable", "Non"],
 	"animals_pictures_dir" : "/static/pictures/", 
 	"low_zoom_alert_message" : "Le niveau de zoom n'est pas suffisament élevé pour placer un point précis !"
 }

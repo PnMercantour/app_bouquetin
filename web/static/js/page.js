@@ -198,11 +198,7 @@ function add_form_block_for_each_animal() {
 
 				// Append default and unknown value
 				childs_select.append(get_default_option());
-				childs_select.append($('<option>', { 
-					value: $UNKNOWN,
-					text : "Non compté"
-				}));
-
+			
 				// Append all possible options
 				$CONF.childs_possible_values.forEach(function (i) {
 					childs_select.append($('<option>', { 
@@ -210,7 +206,7 @@ function add_form_block_for_each_animal() {
 						text : i 
 					}));
 				});
-				form_group_childs.append("Cabris : ");
+				form_group_childs.append("Suitée : ");
 				form_group_childs.append(childs_select);
 
 				form_group_childs.hide();

@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import load_only
 from sqlalchemy.ext.associationproxy import association_proxy
 import json
+from datetime import date, datetime
 
 app = Flask(__name__) 
 
@@ -36,6 +37,7 @@ class People(db.Model):
 			name = people.nom_role, 
 			surname = people.prenom_role)
 
+
 class Observation(db.Model):
 	__table_args__ = {'schema' : conf['postgres_schema_data']}
 	id = db.Column(db.Integer, primary_key=True)
@@ -56,30 +58,46 @@ class TaggedAnimal(db.Model):
 	ears = db.Column(db.String())
 	catch_date = db.Column(db.String())
 	picture = db.Column(db.String())
+	necklace = db.Column(db.String())
+	birthday = db.Column(db.Date())
 
 	def to_json(animal):
+		today = date.today()
+		animal_age = 'Inconnu' # Setting default value
+		if animal.birthday is not None:
+			animal_age = today.year - animal.birthday.year - ((today.month, today.day) < (animal.birthday.month, animal.birthday.day))
+		
+		animal_necklace = 'Aucun' # Setting default value
+		if animal.necklace is not None:
+			animal_necklace = animal.necklace
+
 		return dict(
 			id = animal.id, 
 			name = animal.name, 
 			gender = animal.gender,
 			ears = animal.ears,
 			catch_date = animal.catch_date,
-			picture = animal.picture)
+			picture = animal.picture, 
+			necklace = animal_necklace,
+			age = animal_age)
+
 
 class TaggedAnimalObservation(db.Model):
 	__table_args__ = {'schema' : conf['postgres_schema_data']}
 	id = db.Column(db.Integer, primary_key=True)
-	observation_id = db.Column(db.Integer, db.ForeignKey(conf['postgres_schema_data'] + '.observation.id'))
-	animal_id = db.Column(db.Integer, db.ForeignKey(conf['postgres_schema_data'] + '.tagged_animal.id'))
+	observation_id = db.Column(db.Integer, db.ForeignKey(conf['postgres_schema_data'] + '.observation.id', ondelete='CASCADE', onupdate='CASCADE'))
+	animal_id = db.Column(db.Integer, db.ForeignKey(conf['postgres_schema_data'] + '.tagged_animal.id', ondelete='SET NULL', onupdate='CASCADE'), nullable=True)
 	child_count = db.Column(db.String())
+	comment = db.Column(db.String())
 	observation = db.relationship(Observation, backref = 'animal_obs', foreign_keys=[observation_id])
 	animal = db.relationship(TaggedAnimal, backref = 'obs_animals', foreign_keys=[animal_id])
+
 
 class PeopleObservation(db.Model):
 	__table_args__ = {'schema' : conf['postgres_schema_data']}
 	id = db.Column(db.Integer, primary_key=True)
-	observation_id = db.Column(db.Integer, db.ForeignKey(conf['postgres_schema_data'] + '.observation.id'))
-	people_id = db.Column(db.Integer, db.ForeignKey(conf['postgres_schema_users'] + '.t_roles.id_role'))
+	observation_id = db.Column(db.Integer, db.ForeignKey(conf['postgres_schema_data'] + '.observation.id', ondelete='CASCADE', onupdate='CASCADE'))
+	people_id = db.Column(db.Integer, db.ForeignKey(conf['postgres_schema_users'] + '.t_roles.id_role', ondelete='SET NULL', onupdate='CASCADE'), nullable=True)
 	observation = db.relationship(Observation, backref = 'people_obs', foreign_keys=[observation_id])
 	people = db.relationship(People, backref = 'obs_people', foreign_keys=[people_id])
 
@@ -118,7 +136,12 @@ def create_obs():
 				if 'gender' in animal:
 					if animal['gender'] == "female":
 						if 'childs' not in animal:
-							missing_fields.append("nombre de cabris d'un individu marqué")
+							missing_fields.append("nombre de cabris d'un individu marqué femelle")
+						if 'necklace' not in animal:
+							missing_fields.append("collier d'un individu marqué femelle")
+					elif animal['gender'] == "male":
+						if 'age' not in animal:
+							missing_fields.append("âge d'un individu marqué mâle")
 				else:
 					missing_fields.append("genre d'un individu marqué")
 
@@ -150,7 +173,8 @@ def create_obs():
 			for animal in request.json['animals']:
 				new_animal_obs_relation = TaggedAnimalObservation(
 					observation = new_obs, 
-					animal = TaggedAnimal.query.get(animal['id']))
+					animal = TaggedAnimal.query.get(animal['id']), 
+					comment = animal['comment'])
 				if animal['gender']== "female":
 					new_animal_obs_relation.child_count = animal['childs']
 				else:

@@ -192,6 +192,24 @@ function add_form_block_for_each_animal() {
 
 				form_group_ears.hide();
 
+			// *** NECKLACE SELECT *** //
+				var form_group_necklace = $("<div id='"+$i+"_necklace' class='form-group'/>");
+
+				var necklance_select = $("<select class='form-control' name='animals["+$i+"][necklace]'/>");
+				form_group_necklace.append("Collier :");
+				form_group_necklace.append(necklance_select);
+
+				form_group_necklace.hide();
+
+			// *** AGE SELECT *** //
+				var form_group_age = $("<div id='"+$i+"_age' class='form-group'/>");
+
+				var age_select = $("<select class='form-control' name='animals["+$i+"][age]'/>");
+				form_group_age.append("Age :");
+				form_group_age.append(age_select);
+
+				form_group_age.hide();
+
 			// *** CHILD NUMBER *** //
 				var form_group_childs = $("<div class='form-group' id='"+$i+"_childs'/>");
 				var childs_select = $("<select class='form-control' name='animals["+$i+"][childs]'/>");
@@ -224,6 +242,8 @@ function add_form_block_for_each_animal() {
 			// *** CONSTRUCT LEFT COLUMN *** //
 				left_col.append(form_group_gender);
 				left_col.append(form_group_ears);
+				left_col.append(form_group_age);
+				left_col.append(form_group_necklace);
 				left_col.append(form_group_childs);
 				left_col.append(form_comment);
 
@@ -252,7 +272,11 @@ function add_form_block_for_each_animal() {
 function set_block_data_and_behaviour($id) {
 	var name = $("#"+$id+"_title");
 	var ears_select = $("select[name='animals["+$id+"][ears]']");
-	var childs_select = $("#"+$id+"_childs");
+	var necklace_select = $("select[name='animals["+$id+"][necklace]']");
+	var age_select = $("select[name='animals["+$id+"][age]']");
+	var childs_form_group = $("#"+$id+"_childs");
+	var necklace_form_group = $("#"+$id+"_necklace");
+	var age_form_group = $("#"+$id+"_age");
 	var comment = $("#"+$id+"_comment");
 	var identity = $("#"+$id+"_identity");
 	var details = $("#"+$id+"_details");
@@ -265,8 +289,13 @@ function set_block_data_and_behaviour($id) {
 		// Reset the animal form
 		name.text($ANIMAL_DEFAULT_NAME+" "+($id+1));
 		$("#"+$id+"_ears").show();
-		comment.show()
+		comment.hide()
 		ears_select.empty();
+		necklace_form_group.hide();
+		necklace_select.empty();
+		age_form_group.hide();
+		age_select.empty();
+		childs_form_group.hide();
 		identity.empty();
 		details.empty();
 
@@ -274,38 +303,109 @@ function set_block_data_and_behaviour($id) {
 		ears_select.append(get_default_option());
 		$DATA.animals.forEach(function($animal) {	
 			if ($animal.gender == radio_gender_checked.val()) {
-				ears_select.append($('<option>', { 
-					value: $animal.ears,
-					text : $animal.ears
-				}));
+				if(ears_select.find('option[value="' + $animal.ears + '"]').length === 0) { // Add color only if unique
+					ears_select.append($('<option>', { 
+						value: $animal.ears,
+						text : $animal.ears
+					}));
+				}
 			}
 		});
 
-		// Display or hide the child select
-		if (radio_gender_checked.val() == "male") {
-			childs_select.hide();
-		}
-
-		else if (radio_gender_checked.val() == "female") {
-			childs_select.show();
-		}
-
 		// Set listener on ears_select
 		ears_select.change(function() {
+			// Hide and reset all fields
+			age_form_group.hide();
+			age_select.empty();
+			age_select.append(get_default_option());
+			necklace_form_group.hide();
+			necklace_select.empty();
+			necklace_select.append(get_default_option());
+			childs_form_group.hide();
+			comment.hide();
 			identity.empty();
 			details.empty();
+			name.text($ANIMAL_DEFAULT_NAME+" "+($id+1));
+
+			// Display or hide the child, necklace and age select
+			if (radio_gender_checked.val() == "male") {
+				age_form_group.show();
+			} 
+			else if (radio_gender_checked.val() == "female") {
+				necklace_form_group.show();
+			}
+
+			// Find animals that match gender and ears, and display necklace or age options
 			$DATA.animals.forEach(function($animal) {
 				if (radio_gender_checked.val() == $animal.gender && ears_select.val() == $animal.ears) {
-					if ($animal.name != undefined) {
-						name.text($animal.name);
+					if (radio_gender_checked.val() == $animal.gender) {
+						if($animal.gender == "male"){
+							age_select.append($('<option>', { 
+								value: $animal.age,
+								text : $animal.age
+							}));
+						}
+						else if ($animal.gender == "female"){
+							necklace_select.append($('<option>', { 
+								value: $animal.necklace,
+								text : $animal.necklace
+							}));
+						}
 					}
-					if ($animal.picture != undefined) {
-						identity.append("<img src='" +$CONF.animals_pictures_dir+$animal.picture+ "' class='animal-img img-rounded center-block'/>");
-						details.append("<p><b>Date de capture : </b>"+$animal.catch_date+"</p>");
-					}
-					hidden_id.val($animal.id);
 				}
 			});
+
+			var animal_found = null;
+
+			if(radio_gender_checked.val() == "male"){
+				// Set listener on age_select
+				age_select.change(function() {
+					// Display  and reset fields
+					comment.show()
+					identity.empty();
+					details.empty();
+					// Find the animal that matchs gender, ears and age
+					$DATA.animals.forEach(function($animal) {
+						if (radio_gender_checked.val() == $animal.gender && ears_select.val() == $animal.ears && age_select.val() == $animal.age) {
+							if ($animal.name != undefined) {
+								name.text($animal.name);
+							}
+							if ($animal.picture != undefined) {						
+								identity.append("<img src='" +$CONF.animals_pictures_dir+$animal.picture+ "' class='animal-img img-rounded center-block'/>");
+								details.append("<p><b>Date de capture : </b>"+$animal.catch_date+"</p>");
+								details.append("<p><b>Collier : </b>"+$animal.necklace+"</p>")
+								details.append("<p><b>Age : </b>"+$animal.age+"</p>")
+							}
+							hidden_id.val($animal.id);
+						}
+					});
+				});
+			}
+			else if (radio_gender_checked.val() == "female"){
+				// Set listener on necklace_select
+				necklace_select.change(function() {
+					// Display  and reset fields
+					comment.show()
+					childs_form_group.show();
+					identity.empty();
+					details.empty();
+					// Find the animal that matchs gender, ears and necklace
+					$DATA.animals.forEach(function($animal) {
+						if (radio_gender_checked.val() == $animal.gender && ears_select.val() == $animal.ears && necklace_select.val() == $animal.necklace) {
+							if ($animal.name != undefined) {
+								name.text($animal.name);
+							}
+							if ($animal.picture != undefined) {						
+								identity.append("<img src='" +$CONF.animals_pictures_dir+$animal.picture+ "' class='animal-img img-rounded center-block'/>");
+								details.append("<p><b>Date de capture : </b>"+$animal.catch_date+"</p>");
+								details.append("<p><b>Collier : </b>"+$animal.necklace+"</p>")
+								details.append("<p><b>Age : </b>"+$animal.age+"</p>")
+							}
+							hidden_id.val($animal.id);
+						}
+					});
+				});
+			}
 		});
 	});
 }
